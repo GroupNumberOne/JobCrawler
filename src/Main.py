@@ -1,7 +1,5 @@
-import MiniCrawler
+import Crawler
 
-url = "http://wikipedia.org/wiki/Soccer"
+url = "http://www.cvenvacaturebank.nl"
 
-crawler = MiniCrawler.MiniCrawler()
-
-crawler.printHeadlines(url)
+Crawler.startCrawler(url,3)
