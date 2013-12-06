@@ -1,26 +1,54 @@
 import psycopg2
 from bs4 import BeautifulSoup
 import re
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
 
-try:
-    #conn_string = "host='145.24.222.158' dbname='INFPRJ01-56' user='postgres' password='GroeP1'"
-    conn_string = "host='localhost' dbname='postgres' user='postgres' password='GroeP1'"
-    conn = psycopg2.connect(conn_string)
-except:
-    print "Can't connect to the database"
+import DbHandler
+    
+def findValues(soup,v,tag='span'):
+    tag = soup.find(tag,text=re.compile('.*'+v+'.*'))
+    return None if tag is None else tag.parent.find('div').text
 
-def parseCV(soup):
-    print "Parsing cv ..."
-    cvData = []
-    if ''.join(soup.findAll(text=True)).find("Beroep") > 0: #Means we have someone with ICT experience
-        beroep = soup.find('span',text=re.compile('.*Beroep.*')).parent.find('div').text
-        opleiding = soup.find('span',text=re.compile('.*Niveau.*')).parent.find('div').text
-        woonplaats = soup.find('span',text=re.compile('.*Woonplaats.*')).parent.find('div').text
-        geslacht = soup.find('span',text=re.compile('.*Geslacht.*')).parent.find('div').text
-        provincie = soup.find('span',text=re.compile('.*Provincie.*')).parent.find('div').text
-        leeftijd = soup.find('span',text=re.compile('.*Leeftijd.*')).parent.find('div').text.split()[0]
-        
-        cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd}
-        print cvData
-        print cvData['beroep']
-        
+def parseCV(soup,fullUrl=None):
+    
+    if findValues(soup,"ICT/ Automatisering","div") is None: #Means we have someone with ICT experience
+        return
+    print "Parsing..."
+    
+    beroep = findValues(soup,"Beroep")
+    opleiding = findValues(soup,"Niveau")
+    woonplaats = findValues(soup,"Woonplaats")
+    geslacht = findValues(soup,"Geslacht")
+    provincie = findValues(soup,"Provincie")
+    leeftijd = findValues(soup,"Leeftijd")
+    if leeftijd != None:
+        leeftijd = leeftijd.split()[0]
+    
+    if soup.find('span',text=re.compile('.*Rijbewijs.*')) >= 0:
+        rijbewijs = (findValues(soup,"Rijbewijs").find('B') >= 0)
+    else:
+        rijbewijs = False
+    
+    cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd,'rijbewijs':rijbewijs}
+    
+    DbHandler.insertCV(cvData,fullUrl)
+
+def parseVacature(soup,fullUrl=None):
+    if findValues(soup,"ICT/ Automatisering","div") is None: #ICT job
+        return
+    print "Parsing..."
+    
+    beroep = findValues(soup,"Beroep")
+    opleiding = findValues(soup,"Niveau")
+    dienstverband = findValues(soup,"Dienstverband")
+    plaats = findValues(soup,"Regio")
+    kennis = findValues(soup,"Kennis")
+    omschrijving = findValues(soup,"Functieomschrijving")
+    
+    vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'kennis':kennis,'omschrijving':omschrijving}
+    
+    DbHandler.insertVacature(vacatureData, fullUrl)
+    
