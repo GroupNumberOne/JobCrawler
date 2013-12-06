@@ -46,7 +46,7 @@ def startCrawler(base,amount=40):
     else:
         for feed in feedList:
             print "Crawling "+str(i)+" of "+str(amount)+" ("+feed['fullurl']+")"
-            print "Est. time until completion: "+str(round((time.time()-start_time)/i*(amount-i)))+"s"
+            print "Est. time until completion: "+str(round((time.time()-start_time)/i*(amount-i)/60))+"m"
             try:
                 crawlSite(feed['fullurl'])
             except:
