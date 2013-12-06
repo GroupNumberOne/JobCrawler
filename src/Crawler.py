@@ -2,6 +2,7 @@ import psycopg2
 import psycopg2.extras
 import urllib2
 from bs4 import BeautifulSoup
+from datetime import datetime,date
 import time
 import Parsers.CVenVParser as CVenVParser
 import DbHandler as DbHandler
@@ -32,31 +33,32 @@ def crawlSite(feed):
     elif loweredfeed.find('cvenvacaturebank') > 0 and loweredfeed.find('/vacature/') > 0 and loweredfeed.find('.html') > 0 and loweredfeed.find('/reageer/') < 0 and loweredfeed.find('/doorsturen/') < 0:
         CVenVParser.parseVacature(soup,feed)
             
-def startCrawler(base,amount=20):
-    print "Crawler started for "+str(amount)+" crawls"
+def startCrawler(base,amount=40):
     global baseUrl
     baseUrl = base
-    
+    start_time = time.time()
     feedList = DbHandler.gatherUrls(base,amount)
+    print "Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList))
     i = 1;
     
     if not feedList:
         crawlSite(base)
     else:
         for feed in feedList:
-            print "Crawling "+str(i)+" of "+str(amount)
+            print "Crawling "+str(i)+" of "+str(amount)+" ("+feed['fullurl']+")"
+            print "Est. time until completion: "+str(round((time.time()-start_time)/i*(amount-i)))+"s"
             try:
                 crawlSite(feed['fullurl'])
             except:
                 print "Could not crawl "+feed['fullurl']
-            time.sleep(2)
+            time.sleep(1.5)
             i+= 1
-            if i%10 == 0:
+            if i%50 == 0:
                 DbHandler.dbCommit()
-    
-    #Select some urls from the database and crawl those sites. Finally, commit the changes.
+                
     DbHandler.dbCommit()
-    
+    print "Crawling complete, remaining: "+str(amount-len(feedList))
     if len(feedList) < amount and len(feedList) != 0:
+        print "Continue crawling with new list ..."
         startCrawler(base, amount-len(feedList))
-    print "Crawling complete"
+    
