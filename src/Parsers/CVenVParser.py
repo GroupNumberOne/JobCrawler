@@ -22,4 +22,5 @@ def parseCV(soup):
         
         cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd}
         print cvData
+        print cvData['beroep']
         

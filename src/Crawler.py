@@ -6,8 +6,8 @@ import time
 import Parsers.CVenVParser as CVenVParser
 
 try:
-    #conn_string = "host='145.24.222.158' dbname='postgres' user='postgres' password='GroeP1'"
-    conn_string = "host='localhost' dbname='postgres' user='postgres' password='GroeP1'"
+    conn_string = "host='145.24.222.158' dbname='INFPRJ01-56' user='postgres' password='GroeP1'"
+    #conn_string = "host='localhost' dbname='postgres' user='postgres' password='GroeP1'"
     conn = psycopg2.connect(conn_string)
     print "Successfully connected to database"
 except:
@@ -44,10 +44,11 @@ def crawlSite(feed):
             elif(ref.find('/') == 0):
                 saveUrl(baseUrl,baseUrl+ref)
     cursor.execute("""UPDATE """+db_name+""" SET lastcrawled = current_date WHERE fullUrl = '"""+feed+"""'""")
-    if baseUrl.find('cvenvacaturebank') > 0 and feed.find('/cv/') > 0 and feed.find('/koop/') < 0 and feed.find('/ideal/') < 0:
+    if baseUrl.find('cvenvacaturebank') > 0 and feed.lower().find('/cv/') > 0 and feed.find('/koop/') < 0 and feed.find('/ideal/') < 0:
         CVenVParser.parseCV(soup)
             
 def startCrawler(base,amount=20):
+    print "Crawler started for "+str(amount)+" crawls"
     global baseUrl
     baseUrl = base
     cursor.execute("""SELECT * from """+db_name+""" WHERE baseurl LIKE '%"""+base+"""%' AND fullurl LIKE '%"""+base+"""%' AND (lastcrawled < current_date - integer '1' OR lastcrawled IS NULL)
