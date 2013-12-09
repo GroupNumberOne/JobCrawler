@@ -71,4 +71,6 @@ def startCrawler(base,amount=40):
     if len(feedList) < amount and len(feedList) != 0:
         print "Continue crawling with new list ..."
         startCrawler(base, amount-len(feedList))
+        
+crawlSite("http://www.starapple.nl/vacature-43250-Naast_programmeren_ook_veel_vrijheid_en_ruimte_voor_eigen_inbreng_Ridderkerk/")
     
