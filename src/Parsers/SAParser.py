@@ -13,6 +13,9 @@ def findValues(soup,v,tag='span'):
     return None if tag is None else tag.parent.find('div').text
 
 def parseCV(soup,fullUrl=None):
+    print fullUrl
+    '''
+    
     if findValues(soup,"ICT/ Automatisering","div") is None: #Means we have someone with ICT experience
         return
     print "Parsing..."
@@ -34,8 +37,10 @@ def parseCV(soup,fullUrl=None):
     cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd,'rijbewijs':rijbewijs}
     
     DbHandler.insertCV(cvData,fullUrl)
-    
+    '''
 def parseVacature(soup,fullUrl=None):
+    print fullUrl
+    '''
     if findValues(soup,"ICT/ Automatisering","div") is None: #ICT job
         return
     print "Parsing..."
@@ -50,3 +55,4 @@ def parseVacature(soup,fullUrl=None):
     vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'kennis':kennis,'omschrijving':omschrijving}
     
     DbHandler.insertVacature(vacatureData, fullUrl)
+    '''
