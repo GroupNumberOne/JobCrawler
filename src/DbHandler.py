@@ -5,6 +5,7 @@ In charge of communication with the Database
 
 import psycopg2
 import psycopg2.extras
+import time
 
 '''
 When this file is imported it will make a connection with the database
@@ -14,12 +15,17 @@ Plan: - Make proper class with constructor
       - Use hard-coded strings for conn
       - Have only 1 or 2 functions with all the SQL code to make more managable
 '''
-try:
-    conn_string = "host='145.24.222.158' dbname='INFPRJ01-56' user='postgres' password='GroeP1'"
-    conn = psycopg2.connect(conn_string)
-    print "Successfully connected to database"
-except:
-    print "Can't connect to the database"
+isConn = False
+
+while not isConn:
+    try:
+        conn_string = "host='145.24.222.158' dbname='INFPRJ01-56' user='postgres' password='GroeP1'"
+        conn = psycopg2.connect(conn_string)
+        print "Successfully connected to database"
+        isConn = True
+    except:
+        print "Can't connect to the database"
+        time.sleep(3)
     
 db_urls = "urls"
 db_cv = "cv"
