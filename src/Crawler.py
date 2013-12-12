@@ -34,7 +34,7 @@ def crawlSite(feed):
     c=urllib2.urlopen(feed)
     soup = BeautifulSoup(c, 'lxml')
     
-    DbHandler.changeDate(feed)
+    #DbHandler.changeDate(feed)
     loweredfeed = feed.lower()
     
     '''
@@ -44,9 +44,11 @@ def crawlSite(feed):
         if a.has_attr('href'):
             ref = a['href']
             if ref.find('http') == 0:
-                saveUrl(baseUrl,a['href'],loweredfeed)
+                print
+                #saveUrl(baseUrl,a['href'],loweredfeed)
             elif ref.find('/') == 0:
-                saveUrl(baseUrl,baseUrl+ref,loweredfeed)
+                print
+                #saveUrl(baseUrl,baseUrl+ref,loweredfeed)
                 
     '''
     Tell a specific parser to parse the good URL's
