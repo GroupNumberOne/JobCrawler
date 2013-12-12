@@ -1,3 +1,9 @@
+'''
+JobCrawler Crawler class
+Searches for and saves URL's for designated websites.
+Created by Bob van Kamp & Patrick van der Reijden
+'''
+
 import psycopg2
 import psycopg2.extras
 import urllib2
@@ -9,26 +15,45 @@ import Parsers.SAParser as SAParser
 import DbHandler as DbHandler
 
 baseUrl = '';
-    
-def saveUrl(baseUrl,fullUrl):
-    if fullUrl.lower().find('/cv/koop') > 0 or fullUrl.lower().find('/cv/ideal') > 0 or fullUrl.lower().find('/vacature/doorsturen') > 0 or fullUrl.lower().find('vacature/reageer') > 0:
-        return
+
+'''
+If the current URL is a website of interest (containing useful information)
+we store it in the database
+'''    
+def saveUrl(baseUrl,fullUrl,loweredfeed):
+    if loweredfeed.find('cvenvacaturebank') > 0:
+        if fullUrl.lower().find('/cv/koop') > 0 or fullUrl.lower().find('/cv/ideal') > 0 or fullUrl.lower().find('/vacature/doorsturen') > 0 or fullUrl.lower().find('vacature/reageer') > 0:
+            return
+    elif loweredfeed.find('starapple') > 0:
+        if loweredfeed.find('/kandidaat-') > 0 and loweredfeed.find('-download') < 0 and loweredfeed.find('/kandidaat-tell') < 0 or loweredfeed.find('/vacature-') > 0:
+            return
     
     DbHandler.insertUrl(baseUrl,fullUrl)
- 
+
+'''
+Crawler's main operation after it's started
+'''
 def crawlSite(feed):
     c=urllib2.urlopen(feed)
-    soup = BeautifulSoup(c, "lxml")
+    soup = BeautifulSoup(c, 'lxml')
+    
+    DbHandler.changeDate(feed)
+    loweredfeed = feed.lower()
+    
+    '''
+    Save the good URL's that are found
+    '''
     for a in soup.findAll('a'):
         if a.has_attr('href'):
             ref = a['href']
             if ref.find('http') == 0:
-                saveUrl(baseUrl,a['href'])
+                saveUrl(baseUrl,a['href'],loweredfeed)
             elif ref.find('/') == 0:
-                saveUrl(baseUrl,baseUrl+ref)
+                saveUrl(baseUrl,baseUrl+ref,loweredfeed)
                 
-    DbHandler.changeDate(feed)
-    loweredfeed = feed.lower()
+    '''
+    Tell a specific parser to parse the good URL's
+    '''            
     if loweredfeed.find('cvenvacaturebank') > 0:
         if loweredfeed.find('/cv/') > 0 and loweredfeed.find('/koop/') < 0 and loweredfeed.find('/ideal/') < 0 and loweredfeed.find('.html') > 0:
             CVenVParser.parseCV(soup,feed)
@@ -48,6 +73,11 @@ def startCrawler(base,amount=40):
     print "Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList))
     i = 1;
     
+    '''
+    See if there are URL's in the database with the feed as base.
+    If not we start crawling it anew
+    If there is we take these URL's and crawl them as if they are a new base URL
+    '''
     if not feedList:
         try:
             crawlSite(base)
@@ -61,8 +91,15 @@ def startCrawler(base,amount=40):
                 crawlSite(feed['fullurl'])
             except:
                 print "Could not crawl "+feed['fullurl']
+                
+            '''
+            Put a small delay in the crawling process in order not to flood the website with requests.
+            Currently: 1.5 seconds
+            Because: Developing and testing. Slower would slow down this proces.
+            Plan: set to 10 seconds as a safe delay
+            '''
             time.sleep(1.5)
-            i+= 1
+            
             if i%50 == 0:
                 DbHandler.dbCommit()
                 
@@ -72,7 +109,4 @@ def startCrawler(base,amount=40):
         print "Continue crawling with new list ..."
         startCrawler(base, amount-len(feedList))
     
-    return "Crawling completed"
-        
-#crawlSite("http://www.starapple.nl/vacature-43250-Naast_programmeren_ook_veel_vrijheid_en_ruimte_voor_eigen_inbreng_Ridderkerk/")
-    
+    return "Crawling completed"    

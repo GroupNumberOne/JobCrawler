@@ -1,9 +1,21 @@
+'''
+JobCrawler Database Hanlder class
+In charge of communication with the Database
+'''
+
 import psycopg2
 import psycopg2.extras
 
+'''
+When this file is imported it will make a connection with the database
+
+Plan: - Make proper class with constructor
+      - Make sure class is instantiated when the crawler starts and connection closed when crawler stops.
+      - Use hard-coded strings for conn
+      - Have only 1 or 2 functions with all the SQL code to make more managable
+'''
 try:
     conn_string = "host='145.24.222.158' dbname='INFPRJ01-56' user='postgres' password='GroeP1'"
-    #conn_string = "host='localhost' dbname='postgres' user='postgres' password='GroeP1'"
     conn = psycopg2.connect(conn_string)
     print "Successfully connected to database"
 except:

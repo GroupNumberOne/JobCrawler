@@ -1,3 +1,9 @@
+'''
+JobCrawler StarApple Parser class
+Takes the useful information out of the page's HTML
+and stores it in the Database
+'''
+
 import psycopg2
 from bs4 import BeautifulSoup
 import re
@@ -14,7 +20,6 @@ def findValues(soup,v,tag='span'):
 def parseCV(soup,fullUrl=None):
     print fullUrl
     '''
-    
     if findValues(soup,"ICT/ Automatisering","div") is None: #Means we have someone with ICT experience
         return
     print "Parsing..."

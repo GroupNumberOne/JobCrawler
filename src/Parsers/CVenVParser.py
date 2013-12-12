@@ -1,3 +1,9 @@
+'''
+JobCrawler CV en Vacaturebank Parser class
+Takes the useful information out of the page's HTML
+and stores it in the Database
+'''
+
 import psycopg2
 from bs4 import BeautifulSoup
 import re
