@@ -6,7 +6,13 @@ from bs4 import BeautifulSoup
 #import flask
 
 url = 'http://www.starapple.nl/vacature-43500-Als_kerstcadeau_starten_met_je_BI_development_baan_Ede_Gld/'
+
 def start():
     c=urllib2.urlopen(url)
+    print "1"
     soup = BeautifulSoup(c, 'lxml')
+    print "2"
     SAParser.parseVacature(soup,url)
+    
+
+start()
