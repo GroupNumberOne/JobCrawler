@@ -13,6 +13,7 @@ import time
 import Parsers.CVenVParser as CVenVParser
 import Parsers.SAParser as SAParser
 import DbHandler as DbHandler
+import Parsers.MBParser as MBParser
 
 baseUrl = '';
 
@@ -44,11 +45,9 @@ def crawlSite(feed):
         if a.has_attr('href'):
             ref = a['href']
             if ref.find('http') == 0:
-                print
-                #saveUrl(baseUrl,a['href'],loweredfeed)
+                saveUrl(baseUrl,a['href'],loweredfeed)
             elif ref.find('/') == 0:
-                print
-                #saveUrl(baseUrl,baseUrl+ref,loweredfeed)
+                saveUrl(baseUrl,baseUrl+ref,loweredfeed)
                 
     '''
     Tell a specific parser to parse the good URL's
@@ -63,6 +62,8 @@ def crawlSite(feed):
             SAParser.parseCV(soup,feed)
         elif loweredfeed.find('/vacature-') > 0:
             SAParser.parseVacature(soup,feed)
+    elif loweredfeed.find('vacature.monsterboard') > 0:
+        MBParser.parseVacature(soup, feed)
             
 def startCrawler(base,amount=40):
     global baseUrl

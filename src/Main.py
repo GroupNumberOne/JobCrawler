@@ -1,4 +1,4 @@
-#import Crawler
+import Crawler
 import Parsers.SAParser as SAParser
 import urllib2
 from bs4 import BeautifulSoup
@@ -9,9 +9,7 @@ url = 'http://www.starapple.nl/vacature-43500-Als_kerstcadeau_starten_met_je_BI_
 
 def start():
     c=urllib2.urlopen(url)
-    print "1"
     soup = BeautifulSoup(c, 'lxml')
-    print "2"
     SAParser.parseVacature(soup,url)
     
 
