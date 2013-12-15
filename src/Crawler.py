@@ -12,8 +12,8 @@ from datetime import datetime,date
 import time
 import Parsers.CVenVParser as CVenVParser
 import Parsers.SAParser as SAParser
-import DbHandler as DbHandler
 import Parsers.MBParser as MBParser
+import DbHandler
 
 baseUrl = '';
 
@@ -35,7 +35,7 @@ def crawlSite(feed):
     c=urllib2.urlopen(feed)
     soup = BeautifulSoup(c, 'lxml')
     
-    #DbHandler.changeDate(feed)
+    DbHandler.changeDate(feed)
     loweredfeed = feed.lower()
     
     '''
@@ -65,7 +65,7 @@ def crawlSite(feed):
     elif loweredfeed.find('vacature.monsterboard') > 0:
         MBParser.parseVacature(soup, feed)
             
-def startCrawler(base,amount=40):
+def startCrawler(base,amount=5):
     global baseUrl
     baseUrl = base
     start_time = time.time()
@@ -85,12 +85,12 @@ def startCrawler(base,amount=40):
             print "Could not crawl "+base
     else:
         for feed in feedList:
-            print "Crawling "+str(i)+" of "+str(amount)+" ("+feed['fullurl']+")"
-            print "Est. time until completion: "+str(round((time.time()-start_time)/i*(amount-i)/60))+"m"
             try:
                 crawlSite(feed['fullurl'])
             except:
                 print "Could not crawl "+feed['fullurl']
+            
+            i+=1
                 
             '''
             Put a small delay in the crawling process in order not to flood the website with requests.
@@ -104,7 +104,7 @@ def startCrawler(base,amount=40):
                 DbHandler.dbCommit()
                 
     DbHandler.dbCommit()
-    print "Crawling complete, remaining: "+str(amount-len(feedList))
+    print "Crawling "+base+" complete, remaining: "+str(amount-len(feedList))
     if len(feedList) < amount and len(feedList) != 0:
         print "Continue crawling with new list ..."
         startCrawler(base, amount-len(feedList))

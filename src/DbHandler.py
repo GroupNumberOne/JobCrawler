@@ -80,7 +80,7 @@ def changeDate(feed):
     cursor.execute("""UPDATE """+db_urls+""" SET lastcrawled = current_date WHERE fullUrl = '"""+feed+"""'""")
     
 def gatherUrls(base,amount):
-    cursor.execute("""SELECT * from """+db_urls+""" WHERE baseurl LIKE '%"""+base+"""%' AND fullurl LIKE '%"""+base+"""%' AND (lastcrawled <= current_date - integer '2' OR lastcrawled IS NULL)
+    cursor.execute("""SELECT * from """+db_urls+""" WHERE baseurl LIKE '%"""+base+"""%' AND fullurl LIKE '%"""+base+"""%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
     ORDER BY lastcrawled ASC NULLS FIRST LIMIT """+str(amount))
     return cursor.fetchall()
         
