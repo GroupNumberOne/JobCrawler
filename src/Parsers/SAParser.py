@@ -16,6 +16,16 @@ import DbHandler
     
 def findValues(soup,v,tag='span'):
     return soup.find(tag, id=v).text
+
+def findBeroep(soup):
+    #find the second <h3> tag and take it's contents
+    text = str(soup)
+    x = str(soup).find('</h1>')
+    text = text[x+4:]
+    start = text.find('<h1>')
+    end = text.find('</h1>')
+    text = text[start+4:end]
+    return text
     
 def findOmschrijving(soup):
     text = str(soup)[str(soup).find('<h3>Functie</h3>'):] #Take the html as a string to find the exact header
@@ -44,13 +54,20 @@ def findOpleiding(soup):
         return 'Test'
     
 def findKennis(soup):
-    text = str(soup)[str(soup).find('<h3>Eisen</h3>'):] #Take the html as a string to find the exact header
-    start = text.find('<p>')
-    end = text.find('</p>')
-    text = text[start+3:end].lower()
     
     kennisArray = ['java ','java-','java/','java)','c++',re.escape('c#'),'javascript','.net','html','css','python','ruby','perl','mysql','oracle','postgresql','android','vmware','istqb','tmap']
-    
+
+    if str(soup).find('content="StarApple, Vacature') != -1:
+        text = str(soup)[str(soup).find('<h3>Eisen</h3>'):] #Take the html as a string to find the exact header
+        start = text.find('<p>')
+        end = text.find('</p>')
+        text = text[start+3:end].lower()
+    else:
+        text = str(soup)[str(soup).find('<h3>De kandidaat</h3>'):] #Take the html as a string to find the exact header
+        start = text.find('<p>')
+        end = text.find('</p>')
+        text = text[start+3:end].lower()   
+        
     kennis = ''
     
     length = len(text)
@@ -68,30 +85,21 @@ def findKennis(soup):
     return kennis
 
 def parseCV(soup,fullUrl=None):
-    print fullUrl
-    '''
-    if findValues(soup,"ICT/ Automatisering","div") is None: #Means we have someone with ICT experience
-        return
     print "Parsing..."
     
-    beroep = findValues(soup,"Beroep")
-    opleiding = findValues(soup,"Niveau")
-    woonplaats = findValues(soup,"Woonplaats")
-    geslacht = findValues(soup,"Geslacht")
-    provincie = findValues(soup,"Provincie")
-    leeftijd = findValues(soup,"Leeftijd")
-    if leeftijd != None:
-        leeftijd = leeftijd.split()[0]
+    beroep = findBeroep(soup)
+    kennis = findKennis(soup)
+    woonplaats = findValues(soup,'standplaats')
+    woonplaats = woonplaats.split()[0]
     
-    if soup.find('span',text=re.compile('.*Rijbewijs.*')) >= 0:
-        rijbewijs = (findValues(soup,"Rijbewijs").find('B') >= 0)
-    else:
-        rijbewijs = False
+
+    print kennis  
+    print "Done parsing"
     
-    cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd,'rijbewijs':rijbewijs}
+    cvData = {'beroep':beroep, 'opleiding': kennis, 'woonplaats':woonplaats}
     
     DbHandler.insertCV(cvData,fullUrl)
-    '''
+    
 def parseVacature(soup,fullUrl=None):
     print "Parsing..."
     
@@ -106,3 +114,5 @@ def parseVacature(soup,fullUrl=None):
     vacatureData = {'opleiding':opleiding,'plaats':plaats,'kennis':kennis,'omschrijving':omschrijving}
     
     DbHandler.insertVacature(vacatureData, fullUrl)
+    
+    

@@ -5,12 +5,12 @@ from bs4 import BeautifulSoup
 #import cherrypy #Let's make a webapp
 #import flask
 
-url = 'http://www.starapple.nl/vacature-43715-Test_Consultant_Arnhem_Arnhem/'
+url = 'http://www.starapple.nl/kandidaat-2168-Medior_PHP_Developer/'
 
 def start():
     c=urllib2.urlopen(url)
     soup = BeautifulSoup(c, 'lxml')
-    SAParser.parseVacature(soup,url)
+    SAParser.parseCV(soup,url)
     
 
 start()
