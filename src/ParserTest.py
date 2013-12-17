@@ -7,10 +7,9 @@ from bs4 import BeautifulSoup
 
 url = 'http://www.starapple.nl/kandidaat-2168-Medior_PHP_Developer/'
 
-def start():
+def start(self):
     c=urllib2.urlopen(url)
     soup = BeautifulSoup(c, 'lxml')
     SAParser.parseCV(soup,url)
     
-
 start()
