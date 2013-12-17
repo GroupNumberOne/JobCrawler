@@ -7,90 +7,83 @@ import psycopg2
 import psycopg2.extras
 import time
 
+import SQL as sql
+
 class DbHandler:    
     
     '''
     When this file is imported it will make a connection with the database
     
     Plan: - Make proper class with constructor
-          - Use hard-coded strings for conn
           - Have only 1 or 2 functions with all the SQL code to make more managable
     '''
     isConn = False    
     
     host = '145.24.222.158'
+    dbname = 'INFPRJ01-56'
+    user = 'prostgres'
+    password = 'GroeP1'
      
     db_urls = 'urls'
     db_cv = 'cv'
     db_vacature = 'vacatures'
-    cv_array = ''
+    
+    cvArray = {'voornaam':None,'achternaam':None,'tussenvoegsels':None,'opleiding':None,'jaren_werkervaring':None,'woonplaats':None,'cursussen':None,'it_kennis':None,'rijbewijs':None,'beroep':None}
+    vacatureArray = {'it_kennis':None,'eisen':None,'plaats':None,'bedrijfsnaam':None,'functie':None,'uren':None,'salaris':None,'niveau':None,'omschrijving':None,'kennis':None,'dienstverband':None}
+
+
     x = 5 # max of 5 conn retries
+    conn = None    
     
-    while not isConn and x != 0:
-        try:
-            conn_string = 'host="145.24.222.158" dbname="INFPRJ01-56" user="postgres" password="GroeP1"'
-            conn = psycopg2.connect(conn_string)
-            print 'Successfully connected to database'
-            isConn = True
-        except:
-            print 'Can\'t connect to the database'
-            time.sleep(5)
-            x= x- 1
+    def __init__(self):
+        while not self.isConn and self.x != 0:
+            try:
+                conn_string = 'host=%s dbname=%s user=%s password=%s' % self.host,self.dbname,self.user,self.password
+                self.conn = psycopg2.connect(conn_string)
+                print 'Successfully connected to database'
+                self.isConn = True
+            except:
+                print 'Can\'t connect to the database'
+                time.sleep(5)
+                self.x= self.x- 1
             
-   
-        
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-    def insertVacature(self,vacatureData,fullUrl):
-        try:
-            self.cursor.execute(""" UPDATE """+self.db_vacature+""" SET functie=%s, niveau=%s, dienstverband=%s, plaats=%s, kennis=%s, omschrijving=%s WHERE url=%s;
-            INSERT INTO """+self.db_vacature+"""
-            (functie, niveau, dienstverband, plaats, kennis, omschrijving, url)
-            SELECT %s, %s, %s, %s, %s, %s, %s
-            WHERE
-            NOT EXISTS (
-            SELECT url FROM """+self.db_vacature+""" WHERE url = %s
-            );""", (vacatureData['beroep'],vacatureData['opleiding'],vacatureData['dienstverband'],vacatureData['plaats'],vacatureData['kennis'],vacatureData['omschrijving'],fullUrl,vacatureData['beroep'],vacatureData['opleiding'],vacatureData['dienstverband'],vacatureData['plaats'],vacatureData['kennis'],vacatureData['omschrijving'],fullUrl,fullUrl))
-        except Exception,e:
-            print 'Could not insert '+fullUrl
-            print str(e)
-            print vacatureData
+            
+    def changeDate(self,feed):
+        self.cursor.execute(sql.date_sql % self.db_urls,feed)
         
-    def insertCV(self,cvData,fullUrl):
-        try:
-            self.cursor.execute(""" UPDATE """+self.db_cv+""" SET opleiding=%s, woonplaats=%s, rijbewijs=%s, beroep=%s WHERE url=%s;
-            INSERT INTO """+self.db_cv+"""
-            (opleiding, woonplaats, rijbewijs, beroep, url)
-            SELECT %s, %s, %s, %s, %s
-            WHERE
-            NOT EXISTS (
-            SELECT url FROM """+self.db_cv+""" WHERE url = %s
-            );""", (cvData['opleiding'],cvData['woonplaats'],cvData['rijbewijs'],cvData['beroep'],fullUrl,cvData['opleiding'],cvData['woonplaats'],cvData['rijbewijs'],cvData['beroep'],fullUrl,fullUrl))
-        except Exception,e:
-            print 'Could not insert '+fullUrl
-            print str(e)
-            print cvData
+    def gatherUrls(self,base,amount):
+        self.cursor.execute(sql.gurl_sql % self.db_urls,base,base,str(amount))
+        return self.cursor.fetchall()
         
     def insertUrl(self,baseUrl,fullUrl):
         try:
-            self.cursor.execute("""INSERT INTO """+self.db_urls+"""
-            (baseurl, fullurl)
-            SELECT %s, %s
-            WHERE
-            NOT EXISTS (
-            SELECT fullurl FROM urls WHERE fullurl = %s
-            );""", (baseUrl,fullUrl,fullUrl))
+            self.cursor.execute(sql.url_sql % self.db_urls,baseUrl,fullUrl,fullUrl)
         except Exception,e:
             print 'Could not insert '+fullUrl
             print str(e)
-            
-    def changeDate(self,feed):
-        self.cursor.execute("""UPDATE """+self.db_urls+""" SET lastcrawled = current_date WHERE fullUrl = '"""+feed+"""'""")
+    
+    def insertVacature(self,vacatureData,fullUrl):
+        xArray = vacatureData
+        vacatureData = self.vacatureArray
+        for o in xArray:
+            vacatureData[o] = xArray[o]
+        try:
+            self.cursor.execute(sql.vacature_sql % self.db_vacature,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,self.db_vacature,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,self.db_vacature,fullUrl)
+        except Exception,e:
+            print 'Could not insert '+fullUrl
+            print str(e)
         
-    def gatherUrls(self,base,amount):
-        self.cursor.execute("""SELECT * from """+self.db_urls+""" WHERE baseurl LIKE '%"""+base+"""%' AND fullurl LIKE '%"""+base+"""%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
-        ORDER BY lastcrawled ASC NULLS FIRST LIMIT """+str(amount))
-        return self.cursor.fetchall()
+    def insertCV(self,cvData,fullUrl):
+        xArray = cvData
+        cvData = self.cvArray
+        for o in xArray:
+            cvData[o] = xArray[o]
+        try:
+            self.cursor.execute(sql.cv_sql % self.db_cv,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,self.db_cv,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,self.db_cv,fullUrl)
+        except Exception,e:
+            print 'Could not insert '+fullUrl
+            print str(e)
             
     def dbCommit(self):
         self.conn.commit()

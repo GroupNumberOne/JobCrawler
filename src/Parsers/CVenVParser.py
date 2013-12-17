@@ -31,7 +31,6 @@ class CVenVParser:
         beroep = self.findValues(soup,'Beroep')
         opleiding = self.findValues(soup,'Niveau')
         woonplaats = self.findValues(soup,'Woonplaats')
-        geslacht = self.findValues(soup,'Geslacht')
         provincie = self.findValues(soup,'Provincie')
         leeftijd = self.findValues(soup,'Leeftijd')
         if leeftijd != None:
@@ -44,7 +43,7 @@ class CVenVParser:
             
         print 'Done parsing'
         
-        cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'geslacht':geslacht,'provincie':provincie,'leeftijd':leeftijd,'rijbewijs':rijbewijs}
+        cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'rijbewijs':rijbewijs}
         
         self.db.insertCV(cvData,fullUrl)
         
@@ -62,6 +61,6 @@ class CVenVParser:
             
         print 'Done parsing'
         
-        vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'kennis':kennis,'omschrijving':omschrijving}
+        vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         
         self.db.insertVacature(vacatureData, fullUrl)

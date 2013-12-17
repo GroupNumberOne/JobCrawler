@@ -79,7 +79,7 @@ class SAParser:
         x= 0
         
         while x <= length: # check wether a word of interest is at the current iteration
-            for s in kennisArray:
+            for s in self.kennisArray:
                 if (text[x:]).find(s) == 0 or (text[x:]).find(s) == 1:
                     if len(kennis) < 2:
                         kennis = s
@@ -99,7 +99,7 @@ class SAParser:
         
         print 'Done parsing'
         
-        cvData = {'beroep':beroep, 'opleiding': kennis, 'woonplaats':woonplaats}
+        cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats}
         
         self.db.insertCV(cvData,fullUrl)
         
@@ -112,7 +112,7 @@ class SAParser:
         omschrijving = self.findOmschrijving(soup)
         
         print 'Done parsing'
-        vacatureData = {'opleiding':opleiding,'plaats':plaats,'kennis':kennis,'omschrijving':omschrijving}
+        vacatureData = {'opleiding':opleiding,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         
         self.db.insertVacature(vacatureData, fullUrl)
     

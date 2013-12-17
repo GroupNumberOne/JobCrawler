@@ -36,7 +36,7 @@ class MBParser:
             print 'Done parsing'
         
             
-            vacatureData = {'beroep':beroep,'plaats':plaats,'opleiding':opleiding,'ervaring':ervaring}
+            vacatureData = {'beroep':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring}
             print vacatureData
             
         self.db.insertVacature(vacatureData, fullUrl)
