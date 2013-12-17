@@ -3,8 +3,8 @@ Isolated SQL statements
 '''
 date_sql = """UPDATE %s SET lastcrawled = current_date WHERE fullUrl = '%s'"""
 
-gurl_sql = """SELECT * from %s WHERE baseurl LIKE '%%s%' AND fullurl LIKE '%%s%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
-        ORDER BY lastcrawled ASC NULLS FIRST LIMIT %s"""
+gurl_sql = """SELECT * from {0} WHERE baseurl LIKE '%{1}%' AND fullurl LIKE '%{2}%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
+        ORDER BY lastcrawled ASC NULLS FIRST LIMIT {3}"""
         
 url_sql = """INSERT INTO %s
             (baseurl, fullurl)
