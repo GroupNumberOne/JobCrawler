@@ -9,10 +9,10 @@ import psycopg2.extras
 import urllib2
 from bs4 import BeautifulSoup
 import time
-import Parsers.CVenVParser as CVenVParser
-import Parsers.SAParser as SAParser
-import Parsers.MBParser as MBParser
-import DbHandler
+from Parsers.MBParser import MBParser
+from Parsers.CVenVParser import CVenVParser
+from Parsers.SAParser import SAParser
+from DbHandler import DbHandler
 
 
 class Crawler:    
@@ -116,3 +116,5 @@ class Crawler:
             self.startCrawler(base, amount-len(feedList))
         
         return "Crawling completed"    
+crawler = Crawler()
+crawler.startCrawler('http://www.cvenvacaturebank.nl')

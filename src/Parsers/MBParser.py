@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import re
 import os,sys,inspect
 
-import DbHandler
+from DbHandler import DbHandler
 
 class MBParser:    
         

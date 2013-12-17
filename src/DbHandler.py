@@ -32,22 +32,23 @@ class DbHandler:
     vacatureArray = {'it_kennis':None,'eisen':None,'plaats':None,'bedrijfsnaam':None,'functie':None,'uren':None,'salaris':None,'niveau':None,'omschrijving':None,'kennis':None,'dienstverband':None}
 
 
-    x = 5 # max of 5 conn retries
-    conn = None    
+    x = 2 # max of 5 conn retries
+    conn = None
+    cursor = None
     
     def __init__(self):
+        global conn,cursor,host,dbname,user,password
         while not self.isConn and self.x != 0:
             try:
-                conn_string = 'host=%s dbname=%s user=%s password=%s' % self.host,self.dbname,self.user,self.password
-                self.conn = psycopg2.connect(conn_string)
+                conn_string = 'host=%s dbname=%s user=%s password=%s' % (host,dbname,user,password)
+                conn = psycopg2.connect(conn_string)
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 print 'Successfully connected to database'
                 self.isConn = True
             except:
                 print 'Can\'t connect to the database'
-                time.sleep(5)
-                self.x= self.x- 1
-            
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                time.sleep(1)
+                self.x= self.x- 1        
             
     def changeDate(self,feed):
         self.cursor.execute(sql.date_sql % self.db_urls,feed)

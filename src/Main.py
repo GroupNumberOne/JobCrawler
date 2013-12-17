@@ -1,13 +1,26 @@
-import Crawler
-import Parsers.SAParser as SAParser
-import urllib2
-from bs4 import BeautifulSoup
-import cherrypy #Let's make a webapp
+#import Crawler
+import time
+from multiprocessing import Process
 
-
-def idle():
-    #while not crawling
-    #start crawling
-    #sleep 10 min
-    #checkdatabase if crawling
+class Main(Process):
+    urlToCrawl = ''
+    crawling = False
     
+    def __init__(self,url):
+        global urlToCrawl
+        urlToCrawl = url
+                
+    def start(self,url):
+        global urlToCrawl
+        print urlToCrawl
+        print url
+        
+    def printen(self,url):
+        print url
+    
+    def idle(self):
+        global crawling
+        while not crawling:
+            #Check if we can crawl
+                #if yes, break.
+            time.sleep(1800)
