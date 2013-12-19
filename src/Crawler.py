@@ -38,7 +38,6 @@ class Crawler:
             if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
                 return
             
-        print fullUrl
         self.db.insertUrl(baseUrl,fullUrl)
 
     def crawlSite(self,feed):
@@ -74,11 +73,11 @@ class Crawler:
         elif loweredfeed.find('vacature.monsterboard') > 0:
             self.mbp.parseVacature(soup, feed)
                 
-    def startCrawler(self,base,amount=20):
+    def startCrawler(self,base,amount=5):
         global baseUrl
         print "Crawling "+base
-        baseUrl = base
-        feedList = self.db.gatherUrls(base,amount)
+        Crawler.baseUrl = base
+        feedList = self.db.gatherUrls(base.split('.')[1],amount)
         print "Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList))
         i = 1;
         
