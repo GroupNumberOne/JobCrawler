@@ -7,6 +7,7 @@ Created by Bob van Kamp & Patrick van der Reijden
 import psycopg2
 import psycopg2.extras
 import urllib2
+import sys
 from bs4 import BeautifulSoup
 import time
 from Parsers.MBParser import MBParser
@@ -36,7 +37,8 @@ class Crawler:
         elif loweredfeed.find('starapple') > 0:
             if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
                 return
-        
+            
+        print fullUrl
         self.db.insertUrl(baseUrl,fullUrl)
 
     def crawlSite(self,feed):
@@ -45,7 +47,6 @@ class Crawler:
         
         self.db.changeDate(feed)
         loweredfeed = feed.lower()
-        
         '''
         Save the good URL's that are found
         '''
@@ -53,9 +54,9 @@ class Crawler:
             if a.has_attr('href'):
                 ref = a['href']
                 if ref.find('http') == 0:
-                    self.saveUrl(self.baseUrl,a['href'],loweredfeed)
+                    self.saveUrl(Crawler.baseUrl,a['href'],loweredfeed)
                 elif ref.find('/') == 0:
-                    self.saveUrl(self.baseUrl,self.baseUrl+ref,loweredfeed)
+                    self.saveUrl(Crawler.baseUrl,self.baseUrl+ref,loweredfeed)
                     
         '''
         Tell a specific parser to parse the good URL's
@@ -73,8 +74,10 @@ class Crawler:
         elif loweredfeed.find('vacature.monsterboard') > 0:
             self.mbp.parseVacature(soup, feed)
                 
-    def startCrawler(self,base,amount=5):
-        self.baseUrl = base
+    def startCrawler(self,base,amount=20):
+        global baseUrl
+        print "Crawling "+base
+        baseUrl = base
         feedList = self.db.gatherUrls(base,amount)
         print "Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList))
         i = 1;
@@ -84,17 +87,19 @@ class Crawler:
         If not we start crawling it anew
         If there is we take these URL's and crawl them as if they are a new base URL
         '''
-        if not feedList:
+        if not feedList or len(feedList) == 0:
             try:
                 self.crawlSite(base)
-            except:
+            except Exception,e:
                 print "Could not crawl "+base
+                print e
         else:
             for feed in feedList:
                 try:
                     self.crawlSite(feed['fullurl'])
-                except:
+                except Exception,e:
                     print "Could not crawl "+feed['fullurl']
+                    print e
                 
                 i+=1
                     
@@ -115,6 +120,4 @@ class Crawler:
             print "Continue crawling with new list ..."
             self.startCrawler(base, amount-len(feedList))
         
-        return "Crawling completed"    
-crawler = Crawler()
-crawler.startCrawler('http://www.cvenvacaturebank.nl')
+        return "Crawling completed"

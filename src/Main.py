@@ -1,26 +1,29 @@
-#import Crawler
+from Crawler import Crawler
 import time
 from multiprocessing import Process
+from DbHandler import DbHandler
 
 class Main(Process):
     urlToCrawl = ''
     crawling = False
+    crawler = None
+    db = DbHandler()
     
-    def __init__(self,url):
+    def __init__(self,url=None):
         global urlToCrawl
-        urlToCrawl = url
+        if url is not None:
+            urlToCrawl = url
                 
     def start(self,url):
-        global urlToCrawl
-        print urlToCrawl
-        print url
+        global urlToCrawl,crawler
+        urlToCrawl = url
+        Main.crawler = Crawler()
+        self.idle()
         
     def printen(self,url):
         print url
     
     def idle(self):
-        global crawling
-        while not crawling:
-            #Check if we can crawl
-                #if yes, break.
-            time.sleep(1800)
+        while not Main.crawling:
+            Main.crawling = True
+        Main.crawler.startCrawler(urlToCrawl)

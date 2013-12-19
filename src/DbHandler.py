@@ -6,6 +6,7 @@ In charge of communication with the Database
 import psycopg2
 import psycopg2.extras
 import time
+import traceback
 
 import SQL as sql
 
@@ -38,34 +39,36 @@ class DbHandler:
     
     def __init__(self):
         global conn,cursor,host,dbname,user,password
-        while not self.isConn and self.x != 0:
+        while not DbHandler.isConn and self.x != 0:
             try:
                 conn_string = 'host=145.24.222.158 dbname=INFPRJ01-56 user=postgres password=GroeP1'
                 conn = psycopg2.connect(conn_string)
                 cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 print 'Successfully connected to database'
-                self.isConn = True
+                DbHandler.isConn = True
             except:
                 print 'Can\'t connect to the database'
-                time.sleep(1)
+                time.sleep(3)
                 self.x= self.x- 1        
             
     def changeDate(self,feed):
         global cursor
-        cursor.execute(sql.date_sql % self.db_urls,feed)
+        cursor.execute(sql.date_sql.format(self.db_urls,feed))
         
     def gatherUrls(self,base,amount):
         global cursor
+        if amount > 100:
+            amount = 100
         cursor.execute(sql.gurl_sql.format(self.db_urls,base,base,str(amount)))
         return cursor.fetchall()
         
     def insertUrl(self,baseUrl,fullUrl):
         global cursor
         try:
-            cursor.execute(sql.url_sql % self.db_urls,baseUrl,fullUrl,fullUrl)
+            cursor.execute(sql.url_sql.format(self.db_urls,baseUrl,fullUrl))
         except Exception,e:
             print 'Could not insert '+fullUrl
-            print str(e)
+            print traceback.format_exc()
     
     def insertVacature(self,vacatureData,fullUrl):
         global cursor
@@ -74,10 +77,10 @@ class DbHandler:
         for o in xArray:
             vacatureData[o] = xArray[o]
         try:
-            cursor.execute(sql.vacature_sql % self.db_vacature,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,self.db_vacature,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,self.db_vacature,fullUrl)
+            cursor.execute(sql.vacature_sql.format(self.db_vacature),(vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,fullUrl))
         except Exception,e:
             print 'Could not insert '+fullUrl
-            print str(e)
+            print traceback.format_exc()
         
     def insertCV(self,cvData,fullUrl):
         global cursor
@@ -86,10 +89,10 @@ class DbHandler:
         for o in xArray:
             cvData[o] = xArray[o]
         try:
-            cursor.execute(sql.cv_sql % self.db_cv,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,self.db_cv,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,self.db_cv,fullUrl)
+            cursor.execute(sql.cv_sql.format(self.db_cv),(cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,fullUrl))
         except Exception,e:
             print 'Could not insert '+fullUrl
-            print str(e)
+            print traceback.format_exc()
             
     def dbCommit(self):
         global conn
