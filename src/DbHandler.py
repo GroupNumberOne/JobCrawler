@@ -7,6 +7,7 @@ import psycopg2
 import psycopg2.extras
 import time
 import traceback
+import logging
 
 import SQL as sql
 
@@ -24,7 +25,8 @@ class DbHandler:
     dbname = 'INFPRJ01-56'
     user = 'prostgres'
     password = 'GroeP1'
-     
+    logging.basicConfig(filename='log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
+    
     db_urls = 'urls'
     db_cv = 'cv'
     db_vacature = 'vacatures'
@@ -44,10 +46,10 @@ class DbHandler:
                 conn_string = 'host=145.24.222.158 dbname=INFPRJ01-56 user=postgres password=GroeP1'
                 conn = psycopg2.connect(conn_string)
                 cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                print 'Successfully connected to database'
+                logging.info('Successfully connected to database')
                 DbHandler.isConn = True
             except:
-                print 'Can\'t connect to the database'
+                logging.info('Can\'t connect to the database')
                 time.sleep(3)
                 self.x= self.x- 1        
             
@@ -65,10 +67,10 @@ class DbHandler:
     def insertUrl(self,baseUrl,fullUrl):
         global cursor
         try:
-            cursor.execute(sql.url_sql.format(self.db_urls,baseUrl,fullUrl))
+            cursor.execute(sql.url_sql.format(self.db_urls),(baseUrl,fullUrl,fullUrl))
         except Exception,e:
-            print 'Could not insert '+fullUrl
-            print traceback.format_exc()
+            logging.debug('Could not insert url '+fullUrl)
+            logging.debug(traceback.format_exc())
     
     def insertVacature(self,vacatureData,fullUrl):
         global cursor
@@ -79,8 +81,8 @@ class DbHandler:
         try:
             cursor.execute(sql.vacature_sql.format(self.db_vacature),(vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,fullUrl))
         except Exception,e:
-            print 'Could not insert '+fullUrl
-            print traceback.format_exc()
+            logging.debug('Could not insert vacature '+fullUrl)
+            logging.debug(traceback.format_exc())
         
     def insertCV(self,cvData,fullUrl):
         global cursor
@@ -91,8 +93,8 @@ class DbHandler:
         try:
             cursor.execute(sql.cv_sql.format(self.db_cv),(cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,fullUrl))
         except Exception,e:
-            print 'Could not insert '+fullUrl
-            print traceback.format_exc()
+            logging.debug('Could not insert cv '+fullUrl)
+            logging.debug(traceback.format_exc())
             
     def dbCommit(self):
         global conn

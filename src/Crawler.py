@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 '''
 JobCrawler Crawler class
 Searches for and saves URL's for designated websites.
@@ -14,12 +16,13 @@ from Parsers.MBParser import MBParser
 from Parsers.CVenVParser import CVenVParser
 from Parsers.SAParser import SAParser
 from DbHandler import DbHandler
+import logging
 
 
 class Crawler:    
     
     baseURL = ''
-        
+    logging.basicConfig(filename='log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
     sap = SAParser()
     cvvp = CVenVParser()
     mbp = MBParser()
@@ -37,7 +40,7 @@ class Crawler:
         elif loweredfeed.find('starapple') > 0:
             if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
                 return
-            
+        fullUrl= ''.join(c for c in fullUrl if c not in 'áéíóúàèìòùäëïöü')
         self.db.insertUrl(baseUrl,fullUrl)
 
     def crawlSite(self,feed):
@@ -75,10 +78,10 @@ class Crawler:
                 
     def startCrawler(self,base,amount=5):
         global baseUrl
-        print "Crawling "+base
+        logging.info("Started crawling "+base)
         Crawler.baseUrl = base
         feedList = self.db.gatherUrls(base.split('.')[1],amount)
-        print "Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList))
+        logging.info("Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList)))
         i = 1;
         
         '''
@@ -90,15 +93,16 @@ class Crawler:
             try:
                 self.crawlSite(base)
             except Exception,e:
-                print "Could not crawl "+base
-                print e
+                logging.debug("Could not crawl "+base)
+                logging.debug(e)
         else:
             for feed in feedList:
                 try:
                     self.crawlSite(feed['fullurl'])
                 except Exception,e:
-                    print "Could not crawl "+feed['fullurl']
-                    print e
+                    logging.debug("Could not crawl "+feed['fullurl'])
+                    logging.debug(e)
+                    self.db.changeDate(feed['fullurl'])
                 
                 i+=1
                     
@@ -114,9 +118,7 @@ class Crawler:
                     self.db.dbCommit()
                     
         self.db.dbCommit()
-        print "Crawling "+base+" complete, remaining: "+str(amount-len(feedList))
+        logging.info("Crawling "+base+" complete, remaining: "+str(amount-len(feedList)))
         if len(feedList) < amount and len(feedList) != 0:
-            print "Continue crawling with new list ..."
+            logging.info("Continue crawling with new list ...")
             self.startCrawler(base, amount-len(feedList))
-        
-        return "Crawling completed"

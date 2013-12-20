@@ -26,7 +26,6 @@ class CVenVParser:
     def parseCV(self,soup,fullUrl=None):
         if self.findValues(soup,'ICT/ Automatisering','div') is None: #Means we have someone with ICT experience
             return
-        print 'Parsing...'
         
         beroep = self.findValues(soup,'Beroep')
         opleiding = self.findValues(soup,'Niveau')
@@ -40,8 +39,6 @@ class CVenVParser:
             rijbewijs = (self.findValues(soup,'Rijbewijs').find('B') >= 0)
         else:
             rijbewijs = False    
-            
-        print 'Done parsing'
         
         cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'rijbewijs':rijbewijs}
         
@@ -50,7 +47,6 @@ class CVenVParser:
     def parseVacature(self,soup,fullUrl=None):
         if self.findValues(soup,'ICT/ Automatisering','div') is None: #ICT job
             return
-        print 'Parsing...'
         
         beroep = self.findValues(soup,'Beroep')
         opleiding = self.findValues(soup,'Niveau')
@@ -58,8 +54,6 @@ class CVenVParser:
         plaats = self.findValues(soup,'Regio')
         kennis = self.findValues(soup,'Kennis')
         omschrijving = self.findValues(soup,'Functieomschrijving')
-            
-        print 'Done parsing'
         
         vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         

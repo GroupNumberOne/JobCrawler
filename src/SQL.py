@@ -8,10 +8,10 @@ gurl_sql = """SELECT fullurl from {0} WHERE baseurl LIKE '%{1}%' AND fullurl LIK
         
 url_sql = """INSERT INTO {0}
             (baseurl, fullurl)
-            SELECT '{1}', '{2}'
+            SELECT %s, %s
             WHERE
             NOT EXISTS (
-            SELECT fullurl FROM urls WHERE fullurl = '{2}'
+            SELECT fullurl FROM {0} WHERE fullurl = %s
             );"""
             
 vacature_sql = """ UPDATE {0} SET it_kennis=%s,eisen=%s,plaats=%s,bedrijfsnaam=%s,functie=%s,uren=%s,salaris=%s,niveau=%s,omschrijving=%s,kennis=%s,dienstverband=%s WHERE url=%s;

@@ -90,28 +90,23 @@ class SAParser:
         return kennis
     
     def parseCV(self,soup,fullUrl=None):
-        print 'Parsing...'
         
         beroep = self.findBeroep(soup)
         kennis = self.findKennis(soup)
         woonplaats = self.findValues(soup,'standplaats')
         woonplaats = woonplaats.split()[0]
         
-        print 'Done parsing'
-        
         cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats}
         
         self.db.insertCV(cvData,fullUrl)
         
     def parseVacature(self,soup,fullUrl=None):
-        print 'Parsing...'
         
         opleiding = self.findOpleiding(soup)
         plaats = self.findValues(soup,'standplaats')
         kennis = self.findKennis(soup)
         omschrijving = self.findOmschrijving(soup)
         
-        print 'Done parsing'
         vacatureData = {'opleiding':opleiding,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         
         self.db.insertVacature(vacatureData, fullUrl)
