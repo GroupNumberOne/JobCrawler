@@ -22,7 +22,7 @@ import logging
 class Crawler:    
     
     baseURL = ''
-    logging.basicConfig(filename='log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
+    logging.basicConfig(filename='C:\log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
     sap = SAParser()
     cvvp = CVenVParser()
     mbp = MBParser()

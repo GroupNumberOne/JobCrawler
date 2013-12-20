@@ -25,7 +25,7 @@ class DbHandler:
     dbname = 'INFPRJ01-56'
     user = 'prostgres'
     password = 'GroeP1'
-    logging.basicConfig(filename='log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
+    logging.basicConfig(filename='C:\log.log',level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
     
     db_urls = 'urls'
     db_cv = 'cv'
@@ -95,6 +95,15 @@ class DbHandler:
         except Exception,e:
             logging.debug('Could not insert cv '+fullUrl)
             logging.debug(traceback.format_exc())
+    def getCrawlstate(self,site):
+        global cursor
+        try:
+            cursor.execute(sql.crawlstate_sql,(site,))
+            #logging.info(cursor.fetchone()[0])
+            return cursor.fetchone()
+        except Exception,e:
+            logging.debug("Could not get crawlstate")
+            logging.debug(e)
             
     def dbCommit(self):
         global conn

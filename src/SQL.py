@@ -31,3 +31,5 @@ cv_sql = """ UPDATE {0} SET voornaam=%s,achternaam=%s,tussenvoegsels=%s,opleidin
             NOT EXISTS (
             SELECT url FROM {0} WHERE url = %s
             );"""
+
+crawlstate_sql = """ SELECT crawling,amount from crawlerstate WHERE site = %s """
