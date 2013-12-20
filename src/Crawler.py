@@ -45,7 +45,7 @@ class Crawler:
 
     def crawlSite(self,feed):
         c=urllib2.urlopen(feed)
-        soup = BeautifulSoup(c, 'lxml')
+        soup = BeautifulSoup(c, 'html5lib')
         
         self.db.changeDate(feed)
         loweredfeed = feed.lower()
@@ -76,7 +76,7 @@ class Crawler:
         elif loweredfeed.find('vacature.monsterboard') > 0:
             self.mbp.parseVacature(soup, feed)
                 
-    def startCrawler(self,base,amount=5):
+    def startCrawler(self,base,amount=1):
         global baseUrl
         logging.info("Started crawling "+base)
         Crawler.baseUrl = base
