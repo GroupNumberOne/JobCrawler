@@ -46,7 +46,6 @@ class DbHandler:
                 conn_string = 'host=145.24.222.158 dbname=INFPRJ01-56 user=postgres password=GroeP1'
                 conn = psycopg2.connect(conn_string)
                 cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-                logging.info('Successfully connected to database')
                 DbHandler.isConn = True
             except:
                 logging.info('Can\'t connect to the database')

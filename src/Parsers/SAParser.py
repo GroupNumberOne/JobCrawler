@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 JobCrawler StarApple Parser class
 Takes the useful information out of the page's HTML
@@ -46,7 +47,7 @@ class SAParser:
     
     def findOpleiding(self,soup):
         text = soup.find('div', id='inhoud').text
-        text = str(text).lower()
+        text = text.lower()
         if text.find(' mbo ') != -1 or text.find('/mbo') != -1 or text.find('/mbo') != -1 or text.find('mbo-') != -1 or text.find('mbo+') != -1:
             return 'MBO'
         elif text.find(' havo ') != -1 or text.find('/havo') != -1 or text.find('/havo') != -1 or text.find('havo-') != -1 or text.find('havo+') != -1:

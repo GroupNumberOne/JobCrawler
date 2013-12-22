@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
 encoding//src/Crawler.py=utf-8
+encoding//src/Parsers/CVenVParser.py=utf-8
+encoding//src/Parsers/SAParser.py=utf-8

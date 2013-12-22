@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 JobCrawler CV en Vacaturebank Parser class
 Takes the useful information out of the page's HTML

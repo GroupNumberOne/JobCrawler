@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 '''
 JobCrawler Crawler class
@@ -40,13 +39,18 @@ class Crawler:
         elif loweredfeed.find('starapple') > 0:
             if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
                 return
+        fullUrl = str(fullUrl)
         fullUrl= ''.join(c for c in fullUrl if c not in 'áéíóúàèìòùäëïöü')
+        
         self.db.insertUrl(baseUrl,fullUrl)
 
     def crawlSite(self,feed):
+        #if not isinstance(feed,unicode):
+            #feed = unicode(feed,'UTF-8')
+            #print isinstance(feed,unicode)
+        
         c=urllib2.urlopen(feed)
         soup = BeautifulSoup(c, 'html5lib')
-        
         self.db.changeDate(feed)
         loweredfeed = feed.lower()
         '''
@@ -112,7 +116,7 @@ class Crawler:
                 Because: Developing and testing. Slower would slow down this proces.
                 Plan: set to 10 seconds as a safe delay
                 '''
-                time.sleep(1.5)
+                time.sleep(10)
                 
                 if i%50 == 0:
                     self.db.dbCommit()

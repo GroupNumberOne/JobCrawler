@@ -6,7 +6,7 @@ from DbHandler import DbHandler
 class Main(Process):
     urlToCrawl = ''
     crawling = False
-    crawler = None
+    crawler = Crawler()
     db = DbHandler()
     
     def __init__(self,url=None):
@@ -17,7 +17,6 @@ class Main(Process):
     def start(self,url):
         global urlToCrawl,crawler
         urlToCrawl = url
-        Main.crawler = Crawler()
         self.idle()
         
     def printen(self,url):

@@ -10,6 +10,7 @@ class StartCrawler():
         Main.start(url) 
     
     if __name__ == '__main__':
+        print "Crawler started..."
         p1 = Process(target=main.start,args=(crawler_cvenv,))
         p2 = Process(target=main.start,args=(crawler_starapple,))
         p3 = Process(target=main.start,args=(crawler_monsterboard,))
@@ -19,3 +20,4 @@ class StartCrawler():
         p1.join()
         p2.join()
         p3.join()
+        print "Crawler shut down."

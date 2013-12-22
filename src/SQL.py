@@ -16,8 +16,8 @@ url_sql = """INSERT INTO {0}
             
 vacature_sql = """ UPDATE {0} SET it_kennis=%s,eisen=%s,plaats=%s,bedrijfsnaam=%s,functie=%s,uren=%s,salaris=%s,niveau=%s,omschrijving=%s,kennis=%s,dienstverband=%s WHERE url=%s;
             INSERT INTO {0}
-            (it_kennis,eisen,plaats,bedrijfsnaam,functie,uren,salaris,niveau,omschrijving,kennis,dienstverband)
-            SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            (it_kennis,eisen,plaats,bedrijfsnaam,functie,uren,salaris,niveau,omschrijving,kennis,dienstverband,url)
+            SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             WHERE
             NOT EXISTS (
             SELECT url FROM {0} WHERE url = %s
