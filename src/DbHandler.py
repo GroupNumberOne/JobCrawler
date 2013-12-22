@@ -54,7 +54,7 @@ class DbHandler:
             
     def changeDate(self,feed):
         global cursor
-        cursor.execute(sql.date_sql.format(self.db_urls,feed))
+        cursor.execute(sql.date_sql.format(self.db_urls),(feed,))
         
     def gatherUrls(self,base,amount):
         global cursor
