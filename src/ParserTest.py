@@ -1,16 +1,5 @@
-import Crawler
-import Parsers.SAParser as SAParser
-import urllib2
-from bs4 import BeautifulSoup
-#import cherrypy #Let's make a webapp
-#import flask
+from Crawler import Crawler
 
-url = 'http://www.starapple.nl/kandidaat-2168-Medior_PHP_Developer/'
-
-def start(self):
-    sap = SAParser()
-    c=urllib2.urlopen(url)
-    soup = BeautifulSoup(c, 'lxml')
-    sap.parseCV(soup,url)
-    
-start()
+crawler = Crawler()
+crawler.baseUrl = 'http://www.monsterboard.nl'
+crawler.crawlSite('http://vacatures.monsterboard.nl/v-ict-l-noord-brabant.aspx')

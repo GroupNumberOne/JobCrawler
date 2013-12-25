@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 JobCrawler Monsterboard Parser class
 Takes the useful information out of the page's HTML
@@ -8,6 +9,7 @@ import psycopg2
 from bs4 import BeautifulSoup
 import re
 import os,sys,inspect
+import logging
 
 from DbHandler import DbHandler
 
@@ -28,15 +30,28 @@ class MBParser:
             return
         print 'Parsing...'
         if soup.find('span', {'itemprop':'occupationalCategory'}).getText() == 'IT / Software Development' and soup.find('div', {'class':'additionalinformation'}) is not None:
-            beroep = soup.find('h1', {'class':'jobtitle'}).getText()
-            opleiding = soup.find('span', {'itemprop':'educationRequirements'}).getText()
-            ervaring = soup.find('span', {'itemprop':'experienceRequirements'}).getText()
-            plaats = soup.find('div', {'class':'additionalinformation'}).find('span',{'class':'wrappable','itemprop':None}).getText()
+            try:
+                beroep = soup.find('h1', {'class':'jobtitle'}).getText()
+            except:
+                beroep = ''
+            try:
+                opleiding = soup.find('span', {'itemprop':'educationRequirements'}).getText()
+            except:
+                opleiding = ''
+            try:
+                ervaring = soup.find('span', {'itemprop':'experienceRequirements'}).getText()
+            except:
+                ervaring = ''
+            try:
+                plaats = soup.find('div', {'class':'additionalinformation'}).find('span',{'class':'wrappable','itemprop':None}).getText()
+            except:
+                plaats = ''
             
             print 'Done parsing'
         
+            logging.info("Inserted "+fullUrl)
             
             vacatureData = {'beroep':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring}
-            print vacatureData
+            logging.info(vacatureData)
             
-        self.db.insertVacature(vacatureData, fullUrl)
+            self.db.insertVacature(vacatureData, fullUrl)

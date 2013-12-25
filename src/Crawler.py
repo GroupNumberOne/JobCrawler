@@ -16,6 +16,7 @@ from Parsers.CVenVParser import CVenVParser
 from Parsers.SAParser import SAParser
 from DbHandler import DbHandler
 import logging
+import traceback
 
 
 class Crawler:    
@@ -39,9 +40,7 @@ class Crawler:
         elif loweredfeed.find('starapple') > 0:
             if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
                 return
-        fullUrl = str(fullUrl)
-        fullUrl= ''.join(c for c in fullUrl if c not in 'áéíóúàèìòùäëïöü')
-        
+
         self.db.insertUrl(baseUrl,fullUrl)
 
     def crawlSite(self,feed):
@@ -67,17 +66,17 @@ class Crawler:
         '''
         Tell a specific parser to parse the good URL's
         '''            
-        if loweredfeed.find('cvenvacaturebank') > 0:
+        if loweredfeed.find('cvenvacaturebank') >= 0:
             if loweredfeed.find('/cv/') > 0 and loweredfeed.find('/koop/') < 0 and loweredfeed.find('/ideal/') < 0 and loweredfeed.find('.html') > 0:
                 self.cvvp.parseCV(soup,feed)
-            elif loweredfeed.find('/vacature/') > 0 and loweredfeed.find('.html') > 0 and loweredfeed.find('/reageer/') < 0 and loweredfeed.find('/doorsturen/') < 0:
+            elif loweredfeed.find('/vacature/') >= 0 and loweredfeed.find('.html') > 0 and loweredfeed.find('/reageer/') < 0 and loweredfeed.find('/doorsturen/') < 0:
                 self.cvvp.parseVacature(soup,feed)
         elif loweredfeed.find('starapple') > 0:
-            if loweredfeed.find('/kandidaat-') > 0 and loweredfeed.find('-download') < 0 and loweredfeed.find('/kandidaat-tell') < 0:
+            if loweredfeed.find('/kandidaat-') >= 0 and loweredfeed.find('-download') < 0 and loweredfeed.find('/kandidaat-tell') < 0:
                 self.sap.parseCV(soup,feed)
-            elif loweredfeed.find('/vacature-') > 0:
+            elif loweredfeed.find('/vacature-') >= 0:
                 self.sap.parseVacature(soup,feed)
-        elif loweredfeed.find('vacature.monsterboard') > 0:
+        elif loweredfeed.find('vacature.monsterboard') >= 0 and loweredfeed.find('.aspx') >= 0:
             self.mbp.parseVacature(soup, feed)
                 
     def startCrawler(self,base,amount=1):
@@ -103,9 +102,12 @@ class Crawler:
             for feed in feedList:
                 try:
                     self.crawlSite(feed['fullurl'])
-                except Exception,e:
+                except urllib2.HTTPError,e:
                     logging.debug("Could not crawl "+feed['fullurl'])
                     logging.debug(e)
+                except Exception,e:
+                    logging.debug("Could not crawl "+feed['fullurl'])
+                    logging.debug(traceback.format_exc())
                     self.db.changeDate(feed['fullurl'])
                 
                 i+=1
@@ -116,7 +118,7 @@ class Crawler:
                 Because: Developing and testing. Slower would slow down this proces.
                 Plan: set to 10 seconds as a safe delay
                 '''
-                time.sleep(10)
+                time.sleep(5)
                 
                 if i%50 == 0:
                     self.db.dbCommit()
