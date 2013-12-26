@@ -103,7 +103,7 @@ class Crawler:
                 try:
                     self.crawlSite(feed['fullurl'])
                 except urllib2.HTTPError,e:
-                    logging.debug("Could not crawl "+feed['fullurl'] + " (http error)")
+                    logging.debug("Could not crawl "+feed['fullurl'] + " (http error " + str(e.code) + ")")
                     self.db.changeDate(feed['fullurl'])
                 except Exception,e:
                     logging.debug("Could not crawl "+feed['fullurl'])
@@ -118,7 +118,7 @@ class Crawler:
                 Because: Developing and testing. Slower would slow down this proces.
                 Plan: set to 10 seconds as a safe delay
                 '''
-                time.sleep(5)
+                time.sleep(10)
                 
                 if i%50 == 0:
                     self.db.dbCommit()
