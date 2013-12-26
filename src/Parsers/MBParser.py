@@ -51,7 +51,7 @@ class MBParser:
         
             logging.info("Inserted "+fullUrl)
             
-            vacatureData = {'beroep':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring}
+            vacatureData = {'functie':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring}
             logging.info(vacatureData)
             
             self.db.insertVacature(vacatureData, fullUrl)

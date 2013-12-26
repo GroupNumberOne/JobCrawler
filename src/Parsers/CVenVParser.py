@@ -56,6 +56,6 @@ class CVenVParser:
         kennis = self.findValues(soup,'Kennis')
         omschrijving = self.findValues(soup,'Functieomschrijving')
         
-        vacatureData = {'beroep':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
+        vacatureData = {'functie':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         
         self.db.insertVacature(vacatureData, fullUrl)

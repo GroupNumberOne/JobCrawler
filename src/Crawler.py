@@ -103,8 +103,8 @@ class Crawler:
                 try:
                     self.crawlSite(feed['fullurl'])
                 except urllib2.HTTPError,e:
-                    logging.debug("Could not crawl "+feed['fullurl'])
-                    logging.debug(e)
+                    logging.debug("Could not crawl "+feed['fullurl'] + " (http error)")
+                    self.db.changeDate(feed['fullurl'])
                 except Exception,e:
                     logging.debug("Could not crawl "+feed['fullurl'])
                     logging.debug(traceback.format_exc())
