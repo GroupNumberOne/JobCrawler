@@ -2,7 +2,7 @@ import cherrypy
 from DbHandler import DbHandler
 
 class Server():
-    cherrypy.config.update({'server.socket_port': 8081})
+    cherrypy.config.update({'server.socket_port': 8081, 'server.socket_host':'0.0.0.0'})
     cherrypy.log.error_log.propagate = False
     cherrypy.log.access_log.propagate = False
     db = DbHandler()
