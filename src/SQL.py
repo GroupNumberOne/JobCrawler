@@ -1,7 +1,7 @@
 '''
 Isolated SQL statements
 '''
-date_sql = """UPDATE {0} SET lastcrawled = current_date WHERE fullUrl = %s"""
+date_sql = """UPDATE {0} SET lastcrawled = current_date,error=%s WHERE fullUrl = %s"""
 
 gurl_sql = """SELECT fullurl from {0} WHERE baseurl LIKE '%{1}%' AND fullurl LIKE '%{2}%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
         ORDER BY lastcrawled ASC NULLS FIRST LIMIT {3}"""
@@ -33,3 +33,7 @@ cv_sql = """ UPDATE {0} SET voornaam=%s,achternaam=%s,tussenvoegsels=%s,opleidin
             );"""
 
 crawlstate_sql = """ SELECT crawling,amount from crawlerstate WHERE site = %s """
+
+crawlstate_all_sql = """ SELECT site,crawling,amount from crawlerstate ORDER BY id """
+
+crawlstate_change_single = """ UPDATE crawlerstate SET crawling=%s,amount=%s WHERE site=%s"""

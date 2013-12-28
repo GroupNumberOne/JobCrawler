@@ -1,0 +1,2 @@
+python StartCrawler.py
+PAUSE

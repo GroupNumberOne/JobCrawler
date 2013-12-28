@@ -52,9 +52,9 @@ class DbHandler:
                 time.sleep(3)
                 self.x= self.x- 1        
             
-    def changeDate(self,feed):
+    def changeDate(self,feed,err=None):
         global cursor
-        cursor.execute(sql.date_sql.format(self.db_urls),(feed,))
+        cursor.execute(sql.date_sql.format(self.db_urls),(err,feed))
         
     def gatherUrls(self,base,amount):
         global cursor
@@ -102,6 +102,24 @@ class DbHandler:
             return cursor.fetchone()
         except Exception,e:
             logging.debug("Could not get crawlstate")
+            logging.debug(e)
+            
+    def getCrawlstateAll(self):
+        global cursor
+        try:
+            cursor.execute(sql.crawlstate_all_sql)
+            return cursor.fetchall()
+        except Exception,e:
+            logging.debug("Could not obtain crawl state")
+            logging.debug(e)
+            
+    def changeCrawlStatus(self,status):
+        global cursor,conn
+        
+        try:
+            cursor.executemany(sql.crawlstate_change_single,([status['crawl_enabled'],0,'crawler'],[status['cv_enabled'],status['cv_amount'],'http://www.cvenvacaturebank.nl'],
+                               [status['sa_enabled'],status['sa_amount'],'http://www.starapple.nl'],[status['mb_enabled'],status['mb_amount'],'http://www.monsterboard.nl']))
+        except Exception,e:
             logging.debug(e)
             
     def dbCommit(self):

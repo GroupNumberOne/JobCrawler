@@ -81,10 +81,9 @@ class Crawler:
                 
     def startCrawler(self,base,amount=1):
         global baseUrl
-        logging.info("Started crawling "+base)
         Crawler.baseUrl = base
         feedList = self.db.gatherUrls(base.split('.')[1],amount)
-        logging.info("Crawler started for "+str(amount)+" crawls with a list of "+str(len(feedList)))
+        logging.info("Crawling {0} with {1} remaining.".format(base,amount))
         i = 1;
         
         '''
@@ -103,8 +102,7 @@ class Crawler:
                 try:
                     self.crawlSite(feed['fullurl'])
                 except urllib2.HTTPError,e:
-                    logging.debug("Could not crawl "+feed['fullurl'] + " (http error " + str(e.code) + ")")
-                    self.db.changeDate(feed['fullurl'])
+                    self.db.changeDate(feed['fullurl'],e.code)
                 except Exception,e:
                     logging.debug("Could not crawl "+feed['fullurl'])
                     logging.debug(traceback.format_exc())
@@ -124,7 +122,5 @@ class Crawler:
                     self.db.dbCommit()
                     
         self.db.dbCommit()
-        logging.info("Crawling "+base+" complete, remaining: "+str(amount-len(feedList)))
         if len(feedList) < amount and len(feedList) != 0:
-            logging.info("Continue crawling with new list ...")
             self.startCrawler(base, amount-len(feedList))

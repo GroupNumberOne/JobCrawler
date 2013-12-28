@@ -23,11 +23,12 @@ class Main(Process):
         print url
     
     def idle(self):
-        while not Main.crawling:
-            status = self.db.getCrawlstate(urlToCrawl)
-            if status[0]:
-                Main.crawling = True
-            else:
-                time.sleep(1800)
-        Main.crawling = False
-        Main.crawler.startCrawler(urlToCrawl,status[1])
+        while self.db.getCrawlstate('crawler')[0]:
+            while not Main.crawling:
+                status = self.db.getCrawlstate(urlToCrawl)
+                if status[0]:
+                    Main.crawling = True
+                else:
+                    time.sleep(1800)
+            Main.crawling = False
+            Main.crawler.startCrawler(urlToCrawl,status[1])
