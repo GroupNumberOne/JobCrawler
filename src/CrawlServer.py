@@ -1,8 +1,8 @@
 import cherrypy
 from DbHandler import DbHandler
+import os,inspect
 
 class Server():
-    cherrypy.config.update({'server.socket_port': 8081, 'server.socket_host':'0.0.0.0'})
     cherrypy.log.error_log.propagate = False
     cherrypy.log.access_log.propagate = False
     db = DbHandler()
@@ -78,5 +78,16 @@ class Server():
         self.db.dbCommit()
         return self.form(curr_status)
     changestatus.exposed = True
-
-cherrypy.quickstart(Server())
+    
+path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+config = {'global':
+                {'tools.staticdir.root':path,
+                 'server.socket_port': 8081, 
+                 'server.socket_host':'0.0.0.0'
+                },
+          '/static':
+                {'tools.staticdir.on': True,
+                 'tools.staticdir.dir': 'static',
+                }
+        }
+cherrypy.quickstart(Server(),config=config)
