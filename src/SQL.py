@@ -37,3 +37,6 @@ crawlstate_sql = """ SELECT crawling,amount from crawlerstate WHERE site = %s ""
 crawlstate_all_sql = """ SELECT site,crawling,amount from crawlerstate ORDER BY id """
 
 crawlstate_change_single = """ UPDATE crawlerstate SET crawling=%s,amount=%s WHERE site=%s"""
+
+amount_crawled = """SELECT lastcrawled,count(fullurl) from urls WHERE lastcrawled >= current_date - integer '%s'
+        GROUP BY lastcrawled ORDER BY lastcrawled"""
