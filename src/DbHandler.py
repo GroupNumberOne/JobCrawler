@@ -122,14 +122,6 @@ class DbHandler:
         except Exception,e:
             logging.debug(e)
             
-    def getCrawlData(self,days):
-        global cursor
-        try:
-            cursor.execute(sql.amount_crawled,(days,))
-            return cursor.fetchall()
-        except Exception,e:
-            logging.debug(e)
-            
     def dbCommit(self):
         global conn
         conn.commit()
