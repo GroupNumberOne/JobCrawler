@@ -83,7 +83,7 @@ class Crawler:
         global baseUrl
         Crawler.baseUrl = base
         feedList = self.db.gatherUrls(base.split('.')[1],amount)
-        logging.info("Crawling {0} with {1} remaining.".format(base,amount))
+        logging.info("Crawling {0}. Remaining crawls this run: {1}".format(base,amount))
         i = 1;
         
         '''
