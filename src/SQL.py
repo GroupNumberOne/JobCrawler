@@ -3,7 +3,7 @@ Isolated SQL statements
 '''
 date_sql = """UPDATE {0} SET lastcrawled = current_date,error=%s WHERE fullUrl = %s"""
 
-gurl_sql = """SELECT fullurl from {0} WHERE baseurl LIKE '%{1}%' AND fullurl LIKE '%{2}%' AND (lastcrawled <= current_date - integer '0' OR lastcrawled IS NULL)
+gurl_sql = """SELECT fullurl from {0} WHERE baseurl LIKE '%{1}%' AND fullurl LIKE '%{2}%' AND (lastcrawled <= current_date - integer '5' OR lastcrawled IS NULL)
         ORDER BY lastcrawled ASC NULLS FIRST LIMIT {3}"""
         
 url_sql = """INSERT INTO {0}
