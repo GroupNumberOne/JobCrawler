@@ -23,7 +23,7 @@ class SAParser:
     db = DbHandler()
     
     def findValues(self,soup,v,tag='span'):
-        return soup.find(tag, id=v).text
+        return soup.find(tag, id=v).getText()
     
     def findBeroep(self,soup):
         #find the second <h3> tag and take it's contents
@@ -92,10 +92,19 @@ class SAParser:
     
     def parseCV(self,soup,fullUrl=None):
         
-        beroep = self.findBeroep(soup)
-        kennis = self.findKennis(soup)
-        woonplaats = self.findValues(soup,'standplaats')
-        woonplaats = woonplaats.split()[0]
+        try:
+            beroep = self.findBeroep(soup)
+        except:
+            beroep = ''
+        try:
+            kennis = self.findKennis(soup)
+        except:
+            kennis = ''
+        try:
+            woonplaats = self.findValues(soup,'standplaats')
+            woonplaats = woonplaats.split()[0]
+        except:
+            woonplaats = ''
         
         cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats}
         
@@ -103,10 +112,22 @@ class SAParser:
         
     def parseVacature(self,soup,fullUrl=None):
         
-        opleiding = self.findOpleiding(soup)
-        plaats = self.findValues(soup,'standplaats')
-        kennis = self.findKennis(soup)
-        omschrijving = self.findOmschrijving(soup)
+        try:
+            opleiding = self.findOpleiding(soup)
+        except:
+            opleiding = ''
+        try:
+            plaats = self.findValues(soup,'standplaats')
+        except:
+            plaats = ''
+        try:
+            kennis = self.findKennis(soup)
+        except:
+            kennis = ''
+        try:
+            omschrijving = self.findOmschrijving(soup)
+        except:
+            omschrijving = ''
         
         vacatureData = {'opleiding':opleiding,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
         

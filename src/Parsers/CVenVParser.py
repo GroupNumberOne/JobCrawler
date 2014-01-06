@@ -38,7 +38,7 @@ class CVenVParser:
         return kennis_string
                 
     def handleExperience(self,soup):
-        soup = str(soup.find('div', {'class':'detail'}).getText())
+        soup = soup.find('div', {'class':'detail'}).getText()
         start = soup.find('ICT/ Automatisering')
         end = soup.find(')',start)
         ervaring = [int(s) for s in list(soup[start:end+1]) if s.isdigit()]
@@ -53,14 +53,19 @@ class CVenVParser:
     def parseCV(self,soup,fullUrl=None):
         if self.findValues(soup,'ICT/ Automatisering','div') is None: #Means we have someone with ICT experience
             return
-        
-        jaren_werkervaring = self.handleExperience(soup)
+        try:
+            jaren_werkervaring = self.handleExperience(soup)
+        except:
+            jaren_werkervaring = 0
         beroep = self.findValues(soup,'Beroep')
         opleiding = self.findValues(soup,'Niveau')
         woonplaats = self.findValues(soup,'Woonplaats')
         provincie = self.findValues(soup,'Provincie')
         leeftijd = self.findValues(soup,'Leeftijd')
-        kennis = self.handleKennis(soup.find('div', {'class':'detail'}).text)
+        try:
+            kennis = self.handleKennis(soup.find('div', {'class':'detail'}).getText())
+        except:
+            kennis = ''
 
         if leeftijd != None:
             leeftijd = leeftijd.split()[0]
@@ -82,7 +87,10 @@ class CVenVParser:
         opleiding = self.findValues(soup,'Niveau')
         dienstverband = self.findValues(soup,'Dienstverband')
         plaats = self.findValues(soup,'Regio')
-        kennis = self.handleKennis(self.findValues(soup,'Kennis'))
+        try:
+            kennis = self.handleKennis(self.findValues(soup,'Kennis'))
+        except:
+            kennis = ''
         omschrijving = self.findValues(soup,'Functieomschrijving')
         
         vacatureData = {'functie':beroep,'opleiding':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
