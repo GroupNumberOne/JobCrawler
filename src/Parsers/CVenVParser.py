@@ -60,7 +60,7 @@ class CVenVParser:
         woonplaats = self.findValues(soup,'Woonplaats')
         provincie = self.findValues(soup,'Provincie')
         leeftijd = self.findValues(soup,'Leeftijd')
-        kennis = self.handleKennis(soup.find('div', {'class':'detail'}).getText())
+        kennis = self.handleKennis(soup.find('div', {'class':'detail'}).text)
 
         if leeftijd != None:
             leeftijd = leeftijd.split()[0]

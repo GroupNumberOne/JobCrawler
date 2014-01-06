@@ -37,9 +37,8 @@ class Crawler:
         if loweredfeed.find('cvenvacaturebank') > 0:
             if fullUrl.lower().find('/cv/koop') > 0 or fullUrl.lower().find('/cv/ideal') > 0 or fullUrl.lower().find('/vacature/doorsturen') > 0 or fullUrl.lower().find('vacature/reageer') > 0:
                 return
-        elif loweredfeed.find('starapple') > 0:
-            if loweredfeed.find('/kandidaat-') < 0 and loweredfeed.find('-download') > 0 and loweredfeed.find('/kandidaat-tell') > 0 or loweredfeed.find('/vacature-') < 0:
-                return
+        elif loweredfeed.find('starapple') < 0:
+            return
 
         self.db.insertUrl(baseUrl,fullUrl)
 
