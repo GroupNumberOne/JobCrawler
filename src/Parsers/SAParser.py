@@ -10,85 +10,69 @@ from bs4 import BeautifulSoup
 import re
 import os,sys,inspect
 
-from DbHandler import DbHandler
+#from DbHandler import DbHandler
     
 class SAParser:    
         
     currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parentdir = os.path.dirname(currentdir)
     sys.path.insert(0,parentdir)
-        
-    kennisArray = ['java ','java-','java/','java)','c++',re.escape('c#'),'javascript','.net','html','css','python','ruby','perl','mysql','oracle','postgresql','android','vmware','istqb','tmap']
-    
-    db = DbHandler()
+            
+    #db = DbHandler()
     
     def findValues(self,soup,v,tag='span'):
-        return soup.find(tag, id=v).getText()
+        return soup.find(tag, itemprop=v).getText()
     
     def findBeroep(self,soup):
-        #find the second <h3> tag and take it's contents
         text = str(soup)
-        x = str(soup).find('</h1>')
-        text = text[x+4:]
+        x = text.find('"candidate-specifics"')
+        text = text[x:]
         start = text.find('<h1>')
         end = text.find('</h1>')
         text = text[start+4:end]
         return text
-        
-    def findOmschrijving(self,soup):
-        text = str(soup)[str(soup).find('<h3>Functie</h3>'):] #Take the html as a string to find the exact header
-        start = text.find('<p>')
-        end = text.find('</p>')
-        text = text[start+3:end].split() #This is to lose excess space at either end of the string.
-        text2 = ''
-        for s in text:
-            text2 = text2 + s + " "
-        return text2
+    
+    def findPlaats(self,soup):
+        text = str(soup)
+        x = text.find('<p class="subtitle">')
+        text = text[x:]
+        if text.find('<em>' == -1):
+            return ''
+        start = text.find('<em>')
+        end = text.find('</em>')
+        text = text[start+4:end]
+        return text
     
     def findOpleiding(self,soup):
-        text = soup.find('div', id='inhoud').text
-        text = text.lower()
-        if text.find(' mbo ') != -1 or text.find('/mbo') != -1 or text.find('/mbo') != -1 or text.find('mbo-') != -1 or text.find('mbo+') != -1:
+        text = str(soup)
+        if text.find(' mbo ') != -1 or text.find('/mbo') != -1 or text.find('/mbo') != -1 or text.find('mbo-') != -1 or text.find('(mbo)') != -1  or text.find('mbo+') != -1:
             return 'MBO'
-        elif text.find(' havo ') != -1 or text.find('/havo') != -1 or text.find('/havo') != -1 or text.find('havo-') != -1 or text.find('havo+') != -1:
+        elif text.find(' havo ') != -1 or text.find('/havo') != -1 or text.find('/havo') != -1 or text.find('havo-') != -1 or text.find('(havo)') != -1  or text.find('havo+') != -1:
             return 'HAVO'
-        elif text.find(' vwo ') != -1 or text.find('/vwo') != -1 or text.find('/vwo') != -1 or text.find('vwo-') != -1 or text.find('vwo+') != -1:
+        elif text.find(' vwo ') != -1 or text.find('/vwo') != -1 or text.find('/vwo') != -1 or text.find('vwo-') != -1 or text.find('(vwo)') != -1  or text.find('vwo+') != -1:
             return 'VWO'
-        elif text.find(' hbo ') != -1 or text.find('hbo') != -1 or text.find('/hbo') != -1 or text.find('hbo-') != -1 or text.find('hbo+') != -1:
+        elif text.find(' hbo ') != -1 or text.find('hbo') != -1 or text.find('/hbo') != -1 or text.find('hbo-') != -1 or text.find('(hbo)') != -1  or text.find('hbo+') != -1:
             return 'HBO'
-        elif text.find(' wo ') != -1 or text.find('/wo') != -1 or text.find('/wo') != -1 or text.find('wo-') != -1 or text.find('wo+') != -1:
+        elif text.find(' wo ') != -1 or text.find('/wo') != -1 or text.find('/wo') != -1 or text.find('wo-') != -1 or text.find('(wo)') != -1  or text.find('wo+') != -1:
             return 'WO'
         else:
-            return 'Test'
+            return ''
         
     def findKennis(self,soup):
-        
-        if str(soup).find('content="StarApple, Vacature') != -1:
-            text = str(soup)[str(soup).find('<h3>Eisen</h3>'):] #Take the html as a string to find the exact header
-            start = text.find('<p>')
-            end = text.find('</p>')
-            text = text[start+3:end].lower()
-        else:
-            text = str(soup)[str(soup).find('<h3>De kandidaat</h3>'):] #Take the html as a string to find the exact header
-            start = text.find('<p>')
-            end = text.find('</p>')
-            text = text[start+3:end].lower()   
-            
         kennis = ''
-        
-        length = len(text)
-        x= 0
-        
-        while x <= length: # check wether a word of interest is at the current iteration
-            for s in self.kennisArray:
-                if (text[x:]).find(s) == 0 or (text[x:]).find(s) == 1:
-                    if len(kennis) < 2:
-                        kennis = s
-                    else:
-                        kennis = kennis + ', ' + s
-            x = x + 2
+        text = str(soup)
+        start = text.find('var graphData =')
+        end = text[start:].find(';')
+        text = text[start:start+end]
+        while text.find('"skill":{"name"') != -1:
+            text = text[text.find('"skill":{"name"'):]
+            start = text.find(':"')
+            end = text.find('"}')
+            kennis = kennis + text[start+2:end].lower() + ","
+            text = text[end:]
             
         return kennis
+    
     
     def parseCV(self,soup,fullUrl=None):
         
@@ -101,23 +85,31 @@ class SAParser:
         except:
             kennis = ''
         try:
-            woonplaats = self.findValues(soup,'standplaats')
-            woonplaats = woonplaats.split()[0]
+            woonplaats = self.findPlaats(soup)
         except:
             woonplaats = ''
+        try:
+            opleiding = self.findOpleiding(soup)
+        except:
+            opleiding = ''
         
-        cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats}
+        cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats,'opleiding':opleiding}
         
-        self.db.insertCV(cvData,fullUrl)
+        print(cvData)
+        #self.db.insertCV(cvData,fullUrl)
         
     def parseVacature(self,soup,fullUrl=None):
         
+        try:
+            functie = self.findValues(soup,'title','h1')
+        except:
+            functie = ''
         try:
             opleiding = self.findOpleiding(soup)
         except:
             opleiding = ''
         try:
-            plaats = self.findValues(soup,'standplaats')
+            plaats = self.findValues(soup,'addressLocality')
         except:
             plaats = ''
         try:
@@ -125,11 +117,20 @@ class SAParser:
         except:
             kennis = ''
         try:
-            omschrijving = self.findOmschrijving(soup)
+            omschrijving = self.findValues(soup,'responsibilities','p')
         except:
             omschrijving = ''
+        try:
+            uren = self.findValues(soup,'workHours','td')
+            uren = int(uren[uren.find(',')-2:uren.find(',')])
+        except:
+            uren = None
+        try:
+            salaris = int(self.findValues(soup,'baseSalary'))
+        except:
+            salaris = None
         
-        vacatureData = {'opleiding':opleiding,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
+        vacatureData = {'functie':functie,'niveau':opleiding,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving,'uren':uren,'salaris':salaris}
         
         self.db.insertVacature(vacatureData, fullUrl)
     

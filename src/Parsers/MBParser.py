@@ -96,6 +96,6 @@ class MBParser:
             except:
                 it_kennis = ''
             
-            vacatureData = {'functie':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring,'it_kennis':it_kennis}
+            vacatureData = {'functie':beroep,'plaats':plaats,'niveau':opleiding,'jaren_werkervaring':ervaring,'it_kennis':it_kennis}
             
             self.db.insertVacature(vacatureData, fullUrl)

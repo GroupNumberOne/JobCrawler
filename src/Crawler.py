@@ -71,9 +71,9 @@ class Crawler:
             elif loweredfeed.find('/vacature/') >= 0 and loweredfeed.find('.html') > 0 and loweredfeed.find('/reageer/') < 0 and loweredfeed.find('/doorsturen/') < 0:
                 self.cvvp.parseVacature(soup,feed)
         elif loweredfeed.find('starapple') > 0:
-            if loweredfeed.find('/kandidaat-') >= 0 and loweredfeed.find('-download') < 0 and loweredfeed.find('/kandidaat-tell') < 0:
+            if loweredfeed.find('/profielen/') >= 0 and (loweredfeed.find('/profielen/')+11)<len(loweredfeed):
                 self.sap.parseCV(soup,feed)
-            elif loweredfeed.find('/vacature-') >= 0:
+            elif loweredfeed.find('/vacatures/') >= 0 and (loweredfeed.find('/vacatures/')+11)<len(loweredfeed):
                 self.sap.parseVacature(soup,feed)
         elif loweredfeed.find('vacature.monsterboard') >= 0 and loweredfeed.find('.aspx') >= 0:
             self.mbp.parseVacature(soup, feed)
