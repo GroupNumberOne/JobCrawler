@@ -77,6 +77,7 @@ class DbHandler:
         vacatureData = self.vacatureArray
         for o in xArray:
             vacatureData[o] = xArray[o]
+        vacatureData = self.formatInput(vacatureData)
         try:
             cursor.execute(sql.vacature_sql.format(self.db_vacature),(vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,vacatureData['it_kennis'],vacatureData['eisen'],vacatureData['plaats'],vacatureData['bedrijfsnaam'],vacatureData['functie'],vacatureData['uren'],vacatureData['salaris'],vacatureData['niveau'],vacatureData['omschrijving'],vacatureData['kennis'],vacatureData['dienstverband'],fullUrl,fullUrl))
         except Exception,e:
@@ -89,6 +90,7 @@ class DbHandler:
         cvData = self.cvArray
         for o in xArray:
             cvData[o] = xArray[o]
+        cvData = self.formatInput(cvData)
         try:
             cursor.execute(sql.cv_sql.format(self.db_cv),(cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,cvData['voornaam'],cvData['achternaam'],cvData['tussenvoegsels'],cvData['opleiding'],cvData['jaren_werkervaring'],cvData['woonplaats'],cvData['cursussen'],cvData['it_kennis'],cvData['rijbewijs'],cvData['beroep'],fullUrl,fullUrl))
         except Exception,e:
@@ -125,3 +127,8 @@ class DbHandler:
     def dbCommit(self):
         global conn
         conn.commit()
+        
+    def formatInput(self,input):
+        for s in input:
+            input[s] = input[s].lower().rstrip().lstrip()
+        return input
