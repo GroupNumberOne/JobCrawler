@@ -36,24 +36,26 @@ class SAParser:
         text = str(soup)
         x = text.find('<p class="subtitle">')
         text = text[x:]
-        if text.find('<em>' == -1):
-            return ''
-        start = text.find('<em>')
-        end = text.find('</em>')
-        text = text[start+4:end]
+        if text.find('<em>') >= 0:
+            start = text.find('<em>')
+            end = text.find('</em>')
+            text = text[start+4:end]
+            text = text.lower()
+        else:
+            text = ''
         return text
     
     def findOpleiding(self,soup):
-        text = str(soup)
-        if text.find(' mbo ') != -1 or text.find('/mbo') != -1 or text.find('/mbo') != -1 or text.find('mbo-') != -1 or text.find('(mbo)') != -1  or text.find('mbo+') != -1:
+        text = str(soup).lower()
+        if text.find(' mbo ') != -1 or text.find('mbo/') != -1 or text.find('/mbo') != -1 or text.find('mbo-') != -1 or text.find('(mbo)') != -1  or text.find('mbo+') != -1:
             return 'MBO'
-        elif text.find(' havo ') != -1 or text.find('/havo') != -1 or text.find('/havo') != -1 or text.find('havo-') != -1 or text.find('(havo)') != -1  or text.find('havo+') != -1:
+        elif text.find(' havo ') != -1 or text.find('havo/') != -1 or text.find('/havo') != -1 or text.find('havo-') != -1 or text.find('(havo)') != -1  or text.find('havo+') != -1:
             return 'HAVO'
-        elif text.find(' vwo ') != -1 or text.find('/vwo') != -1 or text.find('/vwo') != -1 or text.find('vwo-') != -1 or text.find('(vwo)') != -1  or text.find('vwo+') != -1:
+        elif text.find(' vwo ') != -1 or text.find('vwo/') != -1 or text.find('/vwo') != -1 or text.find('vwo-') != -1 or text.find('(vwo)') != -1  or text.find('vwo+') != -1:
             return 'VWO'
-        elif text.find(' hbo ') != -1 or text.find('hbo') != -1 or text.find('/hbo') != -1 or text.find('hbo-') != -1 or text.find('(hbo)') != -1  or text.find('hbo+') != -1:
+        elif text.find(' hbo ') != -1 or text.find('hbo/') != -1 or text.find('/hbo') != -1 or text.find('hbo-') != -1 or text.find('(hbo)') != -1  or text.find('hbo+') != -1:
             return 'HBO'
-        elif text.find(' wo ') != -1 or text.find('/wo') != -1 or text.find('/wo') != -1 or text.find('wo-') != -1 or text.find('(wo)') != -1  or text.find('wo+') != -1:
+        elif text.find(' wo ') != -1 or text.find('wo/') != -1 or text.find('/wo') != -1 or text.find('wo-') != -1 or text.find('(wo)') != -1  or text.find('wo+') != -1:
             return 'WO'
         else:
             return ''
@@ -95,8 +97,7 @@ class SAParser:
         
         cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats,'opleiding':opleiding}
         
-        print(cvData)
-        #self.db.insertCV(cvData,fullUrl)
+        self.db.insertCV(cvData,fullUrl)
         
     def parseVacature(self,soup,fullUrl=None):
         
