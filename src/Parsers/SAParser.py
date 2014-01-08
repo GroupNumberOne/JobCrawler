@@ -42,7 +42,7 @@ class SAParser:
             text = text[start+4:end]
             text = text.lower()
         else:
-            text = ''
+            text = None
         return text
     
     def findOpleiding(self,soup):
@@ -58,7 +58,7 @@ class SAParser:
         elif text.find(' wo ') != -1 or text.find('wo/') != -1 or text.find('/wo') != -1 or text.find('wo-') != -1 or text.find('(wo)') != -1  or text.find('wo+') != -1:
             return 'WO'
         else:
-            return ''
+            return None
         
     def findKennis(self,soup):
         kennis = ''
@@ -81,19 +81,19 @@ class SAParser:
         try:
             beroep = self.findBeroep(soup)
         except:
-            beroep = ''
+            beroep = None
         try:
             kennis = self.findKennis(soup)
         except:
-            kennis = ''
+            kennis = None
         try:
             woonplaats = self.findPlaats(soup)
         except:
-            woonplaats = ''
+            woonplaats = None
         try:
             opleiding = self.findOpleiding(soup)
         except:
-            opleiding = ''
+            opleiding = None
         
         cvData = {'beroep':beroep, 'it_kennis': kennis, 'woonplaats':woonplaats,'opleiding':opleiding}
         
@@ -104,23 +104,23 @@ class SAParser:
         try:
             functie = self.findValues(soup,'title','h1')
         except:
-            functie = ''
+            functie = None
         try:
             opleiding = self.findOpleiding(soup)
         except:
-            opleiding = ''
+            opleiding = None
         try:
             plaats = self.findValues(soup,'addressLocality')
         except:
-            plaats = ''
+            plaats = None
         try:
             kennis = self.findKennis(soup)
         except:
-            kennis = ''
+            kennis = None
         try:
             omschrijving = self.findValues(soup,'responsibilities','p')
         except:
-            omschrijving = ''
+            omschrijving = None
         try:
             uren = self.findValues(soup,'workHours','td')
             uren = int(uren[uren.find(',')-2:uren.find(',')])
