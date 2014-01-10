@@ -8,6 +8,8 @@ import psycopg2.extras
 import time
 import traceback
 import logging
+import urllib2
+import json
 
 import SQL as sql
 
@@ -83,6 +85,9 @@ class DbHandler:
         except Exception,e:
             logging.debug('Could not insert vacature '+fullUrl)
             logging.debug(traceback.format_exc())
+            
+        if vacatureData['plaats'] is not None:
+            self.handleGeocode(vacatureData['plaats'])
         
     def insertCV(self,cvData,fullUrl):
         global cursor
@@ -96,6 +101,10 @@ class DbHandler:
         except Exception,e:
             logging.debug('Could not insert cv '+fullUrl)
             logging.debug(traceback.format_exc())
+            
+        if cvData['woonplaats'] is not None:
+            self.handleGeocode(cvData['woonplaats'])
+            
     def getCrawlstate(self,site):
         global cursor
         try:
@@ -124,11 +133,33 @@ class DbHandler:
         except Exception,e:
             logging.debug(e)
             
+    def insertGeocode(self,city=None,lat=None,long=None):
+        try:
+            cursor.execute(sql.geocode_insert,(city,lat,long))
+        except Exception,e:
+            logging.debug(e)
+            
+    def checkGeocode(self,city):
+        try:
+            cursor.execute(sql.geocode_get,(city,))
+            return cursor.fetchall()
+        except Exception,e:
+            logging.debug(e)
+    
+    def handleGeocode(self,city):
+        if int(self.checkGeocode(city)[0][0]) == 0:
+            url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city
+            response = json.load(urllib2.urlopen(url))
+            long = response['results'][0]['geometry']['location']['lng']
+            lat = response['results'][0]['geometry']['location']['lat']
+            self.insertGeocode(city,lat,long)
+            
     def dbCommit(self):
         global conn
         conn.commit()
         
     def formatInput(self,input):
         for s in input:
-            input[s] = input[s].lower().rstrip().lstrip()
+            if isinstance(input[s],basestring):
+                input[s] = input[s].lower().rstrip().lstrip()
         return input

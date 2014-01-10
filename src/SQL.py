@@ -37,3 +37,7 @@ crawlstate_sql = """ SELECT crawling,amount from crawlerstate WHERE site = %s ""
 crawlstate_all_sql = """ SELECT site,crawling,amount from crawlerstate ORDER BY id """
 
 crawlstate_change_single = """ UPDATE crawlerstate SET crawling=%s,amount=%s WHERE site=%s"""
+
+geocode_insert = """ INSERT INTO geocodes (city,latitude,longitude) VALUES (%s,%s,%s) """
+
+geocode_get = """ SELECT count(city) FROM geocodes WHERE city=%s"""
