@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import re
 import os,sys,inspect
 
-#from DbHandler import DbHandler
+from DbHandler import DbHandler
     
 class SAParser:    
         
@@ -18,7 +18,7 @@ class SAParser:
     parentdir = os.path.dirname(currentdir)
     sys.path.insert(0,parentdir)
             
-    #db = DbHandler()
+    db = DbHandler()
     
     def findValues(self,soup,v,tag='span'):
         return soup.find(tag, itemprop=v).getText()
