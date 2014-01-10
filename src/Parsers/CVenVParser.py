@@ -57,11 +57,26 @@ class CVenVParser:
             jaren_werkervaring = self.handleExperience(soup)
         except:
             jaren_werkervaring = 0
-        beroep = self.findValues(soup,'Beroep')
-        opleiding = self.findValues(soup,'Niveau')
-        woonplaats = self.findValues(soup,'Woonplaats')
-        provincie = self.findValues(soup,'Provincie')
-        leeftijd = self.findValues(soup,'Leeftijd')
+        try:    
+            beroep = self.findValues(soup,'Beroep')
+        except:
+            beroep = None
+        try:
+            opleiding = self.findValues(soup,'Niveau')
+        except:
+            opleiding = None
+        try:
+            woonplaats = self.findValues(soup,'Woonplaats')
+        except:
+            woonplaats = None
+        try:
+            provincie = self.findValues(soup,'Provincie')
+        except:
+            provincie = None
+        try:
+            leeftijd = self.findValues(soup,'Leeftijd')
+        except:
+            leeftijd = None
         try:
             kennis = self.handleKennis(soup.find('div', {'class':'detail'}).getText())
         except:
@@ -82,15 +97,26 @@ class CVenVParser:
     def parseVacature(self,soup,fullUrl=None):
         if self.findValues(soup,'ICT/ Automatisering','div') is None: #ICT job
             return
-        
-        beroep = self.findValues(soup,'Beroep')
-        opleiding = self.findValues(soup,'Niveau')
-        dienstverband = self.findValues(soup,'Dienstverband')
-        plaats = self.findValues(soup,'Regio')
+        try:
+            beroep = self.findValues(soup,'Beroep')
+        except:
+            beroep = None
+        try:
+            opleiding = self.findValues(soup,'Niveau')
+        except:
+            opleiding = None
+        try:
+            dienstverband = self.findValues(soup,'Dienstverband')
+        except:
+            dienstverband = None
+        try:
+            plaats = self.findValues(soup,'Regio')
+        except:
+            plaats = None
         try:
             kennis = self.handleKennis(self.findValues(soup,'Kennis'))
         except:
-            kennis = ''
+            kennis = None
         omschrijving = self.findValues(soup,'Functieomschrijving')
         
         vacatureData = {'functie':beroep,'niveau':opleiding,'dienstverband':dienstverband,'plaats':plaats,'it_kennis':kennis,'omschrijving':omschrijving}
