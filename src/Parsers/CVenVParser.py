@@ -65,7 +65,7 @@ class CVenVParser:
         try:
             kennis = self.handleKennis(soup.find('div', {'class':'detail'}).getText())
         except:
-            kennis = ''
+            kennis = None
 
         if leeftijd != None:
             leeftijd = leeftijd.split()[0]

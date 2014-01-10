@@ -47,25 +47,25 @@ class MBParser:
             try:
                 beroep = soup.find('h1', {'class':'jobtitle'}).getText()
             except:
-                beroep = ''
+                beroep = None
             try:
                 opleiding = soup.find('span', {'itemprop':'educationRequirements'}).getText()
             except:
-                opleiding = ''
+                opleiding = None
             try:
                 ervaring = soup.find('span', {'itemprop':'experienceRequirements'}).getText()
                 ervaring = [int(s) for s in ervaring.split() if s.isdigit()]
                 ervaring = ervaring[0]
             except:
-                ervaring = ''
+                ervaring = None
             try:
                 plaats = soup.find('div', {'class':'additionalinformation'}).find('span',{'class':'wrappable','itemprop':None}).getText()
             except:
-                plaats = ''
+                plaats = None
             try:
                 it_kennis = self.handleKennis(soup.find('div',{'itemprop':'description'}).getText())
             except:
-                it_kennis = ''
+                it_kennis = None
             
             vacatureData = {'functie':beroep,'plaats':plaats,'opleiding':opleiding,'jaren_werkervaring':ervaring,'it_kennis':it_kennis}
             
@@ -75,26 +75,26 @@ class MBParser:
             try:
                 beroep = soup.find('h1', {'itemprop':'title'}).getText()
             except:
-                beroep = ''
+                beroep = None
             try:
                 opleiding = soup.find('span', {'itemprop':'educationRequirements'}).getText()
             except:
-                opleiding = ''
+                opleiding = None
             try:
                 ervaring = soup.find('span', {'itemprop':'experienceRequirements'}).getText()
                 ervaring = [int(s) for s in ervaring.split() if s.isdigit()]
                 ervaring = ervaring[0]
             except:
-                ervaring = ''
+                ervaring = None
             try:
                 plaats = soup.find('div', {'id':'jobsummary'}).find('span',{'class':'wrappable','itemprop':'jobLocation'}).getText()
                 plaats = plaats.split(',')[0]
             except:
-                plaats = ''
+                plaats = None
             try:
                 it_kennis = self.handleKennis(soup.find('div',{'itemprop':'description'}).getText())
             except:
-                it_kennis = ''
+                it_kennis = None
             
             vacatureData = {'functie':beroep,'plaats':plaats,'niveau':opleiding,'jaren_werkervaring':ervaring,'it_kennis':it_kennis}
             
