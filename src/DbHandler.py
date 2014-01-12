@@ -155,12 +155,15 @@ class DbHandler:
             logging.debug(e)
     
     def handleGeocode(self,city):
-        if int(self.checkGeocode(city)[0][0]) == 0:
-            url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city.replace(' ','+')
-            response = json.load(urllib2.urlopen(url))
-            long = response['results'][0]['geometry']['location']['lng']
-            lat = response['results'][0]['geometry']['location']['lat']
-            self.insertGeocode(city,lat,long)
+        try:
+            if int(self.checkGeocode(city)[0][0]) == 0:
+                url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city.replace(' ','+')
+                response = json.load(urllib2.urlopen(url))
+                long = response['results'][0]['geometry']['location']['lng']
+                lat = response['results'][0]['geometry']['location']['lat']
+                self.insertGeocode(city,lat,long)
+        except Exception,e:
+            logging.debug(traceback.format_exc())
             
     def dbCommit(self):
         global conn
