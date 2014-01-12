@@ -1,6 +1,2 @@
-from DbHandler import DbHandler
-
-db = DbHandler()
-
-db.handleGeocode('groningen')
-db.dbCommit()
+st = "capelle aan den ijssel"
+print st.replace(' ','+')

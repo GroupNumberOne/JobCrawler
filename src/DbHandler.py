@@ -133,6 +133,14 @@ class DbHandler:
         except Exception,e:
             logging.debug(e)
             
+    def changeCrawlStatusSingle(self,site,status):
+        global cursor,conn
+        
+        try:
+            cursor.execute(sql.crawlstate_change_single,(status,0,site))
+        except Exception,e:
+            logging.debug(e)
+            
     def insertGeocode(self,city=None,lat=None,long=None):
         try:
             cursor.execute(sql.geocode_insert,(city,lat,long))
@@ -148,7 +156,7 @@ class DbHandler:
     
     def handleGeocode(self,city):
         if int(self.checkGeocode(city)[0][0]) == 0:
-            url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city
+            url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city.replace(' ','+')
             response = json.load(urllib2.urlopen(url))
             long = response['results'][0]['geometry']['location']['lng']
             lat = response['results'][0]['geometry']['location']['lat']

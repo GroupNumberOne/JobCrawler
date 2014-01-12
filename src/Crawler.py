@@ -26,8 +26,8 @@ class Crawler:
     sap = SAParser()
     cvvp = CVenVParser()
     mbp = MBParser()
-            
     db = DbHandler()
+    crawltries = 0
     
     '''
     If the current URL is a website of interest (containing useful information)
@@ -77,7 +77,7 @@ class Crawler:
             self.mbp.parseVacature(soup, feed)
                 
     def startCrawler(self,base,amount=1):
-        global baseUrl
+        global baseUrl,crawltries
         Crawler.baseUrl = base
         feedList = self.db.gatherUrls(base.split('.')[1],amount)
         logging.info("Crawling {0}. Remaining crawls this run: {1}".format(base,amount))
@@ -91,10 +91,12 @@ class Crawler:
         if not feedList or len(feedList) == 0:
             try:
                 self.crawlSite(base)
+                crawltries += 1
             except Exception,e:
                 logging.debug("Could not crawl "+base)
                 logging.debug(e)
         else:
+            crawltries = 0
             for feed in feedList:
                 try:
                     self.crawlSite(feed['fullurl'])
@@ -117,7 +119,9 @@ class Crawler:
                 
                 if i%50 == 0:
                     self.db.dbCommit()
-                    
+           
         self.db.dbCommit()
-        if len(feedList) < amount and len(feedList) != 0:
+        if crawltries >=2:
+            self.db.changeCrawlStatusSingle(base, False)
+        elif len(feedList) < amount and len(feedList) != 0:
             self.startCrawler(base, amount-len(feedList))
