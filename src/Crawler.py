@@ -91,12 +91,12 @@ class Crawler:
         if not feedList or len(feedList) == 0:
             try:
                 self.crawlSite(base)
-                crawltries += 1
+                Crawler.crawltries += 1
             except Exception,e:
                 logging.debug("Could not crawl "+base)
                 logging.debug(e)
         else:
-            crawltries = 0
+            Crawler.crawltries = 0
             for feed in feedList:
                 try:
                     self.crawlSite(feed['fullurl'])
@@ -121,7 +121,7 @@ class Crawler:
                     self.db.dbCommit()
            
         self.db.dbCommit()
-        if crawltries >=2:
+        if Crawler.crawltries >=2:
             self.db.changeCrawlStatusSingle(base, False)
         elif len(feedList) < amount and len(feedList) != 0:
             self.startCrawler(base, amount-len(feedList))
