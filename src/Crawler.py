@@ -123,5 +123,6 @@ class Crawler:
         self.db.dbCommit()
         if Crawler.crawltries >=2:
             self.db.changeCrawlStatusSingle(base, False)
+            self.db.dbCommit()
         elif len(feedList) < amount and len(feedList) != 0:
             self.startCrawler(base, amount-len(feedList))

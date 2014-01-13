@@ -157,7 +157,7 @@ class DbHandler:
     def handleGeocode(self,city):
         try:
             if int(self.checkGeocode(city)[0][0]) == 0:
-                url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false" % city.replace(' ','+')
+                url="http://maps.googleapis.com/maps/api/geocode/json?address=%s&sensor=false&region=NL" % city.replace(' ','+')
                 response = json.load(urllib2.urlopen(url))
                 long = response['results'][0]['geometry']['location']['lng']
                 lat = response['results'][0]['geometry']['location']['lat']
