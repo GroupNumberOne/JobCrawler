@@ -101,7 +101,10 @@ class Crawler:
                 try:
                     self.crawlSite(feed['fullurl'])
                 except urllib2.HTTPError,e:
-                    self.db.changeDate(feed['fullurl'],e.code)
+                    if e.code == 404:
+                        self.db.deleteData(feed['fullurl'])
+                    else:
+                        self.db.changeDate(feed['fullurl'],e.code)
                 except Exception,e:
                     logging.debug("Could not crawl "+feed['fullurl'])
                     logging.debug(traceback.format_exc())

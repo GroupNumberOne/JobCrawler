@@ -165,6 +165,12 @@ class DbHandler:
         except Exception,e:
             logging.debug(traceback.format_exc())
             
+    def deleteData(self,feed):
+        try:
+            cursor.execute(sql.data_delete,(feed,feed,feed))
+        except Exception,e:
+            logging.debug(e)
+            
     def dbCommit(self):
         global conn
         conn.commit()
