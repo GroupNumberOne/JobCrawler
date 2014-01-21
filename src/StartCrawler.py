@@ -1,6 +1,5 @@
 from Main import Main
 from multiprocessing import Process, Queue, Pool
-from CrawlServer import Server
         
 class StartCrawler():
     crawler_cvenv = 'http://www.cvenvacaturebank.nl'
