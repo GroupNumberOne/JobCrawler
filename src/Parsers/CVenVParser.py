@@ -93,6 +93,7 @@ class CVenVParser:
         cvData = {'beroep':beroep, 'opleiding': opleiding, 'woonplaats':woonplaats,'rijbewijs':rijbewijs, 'jaren_werkervaring':jaren_werkervaring,'it_kennis':kennis}
         
         self.db.insertCV(cvData,fullUrl)
+        return cvData
         
     def parseVacature(self,soup,fullUrl=None):
         if self.findValues(soup,'ICT/ Automatisering','div') is None: #ICT job
