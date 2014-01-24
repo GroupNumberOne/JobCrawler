@@ -1,0 +1,4 @@
+easy_install pip
+easy_install BeautifulSoup4
+easy_install cherrypy
+easy_install html5lib
